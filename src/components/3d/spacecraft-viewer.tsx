@@ -26,7 +26,7 @@ export function SpacecraftViewer({ spacecraft }: SpacecraftViewerProps) {
         powerPreference: "high-performance",
       });
     } catch {
-      setWebglError(true);
+      queueMicrotask(() => setWebglError(true));
       return;
     }
 

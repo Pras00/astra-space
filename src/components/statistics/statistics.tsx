@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { GLOBAL_STATISTICS } from "@/data/telemetry";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
@@ -26,8 +25,8 @@ function AnimatedStatNumber({
   useEffect(() => {
     if (!isInView) return;
     if (reducedMotion) {
-      setDisplayValue(value);
-      return;
+      const frame = requestAnimationFrame(() => setDisplayValue(value));
+      return () => cancelAnimationFrame(frame);
     }
 
     const duration = 1800; // ms

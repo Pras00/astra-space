@@ -4,14 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Rocket,
-  Calendar,
   Clock,
   Users,
   CheckCircle2,
-  ChevronRight,
   TrendingUp,
 } from "lucide-react";
-import { MISSIONS, MissionNode } from "@/data/missions";
+import { MISSIONS } from "@/data/missions";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";

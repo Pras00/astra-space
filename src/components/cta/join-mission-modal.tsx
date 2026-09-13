@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { X, Send, CheckCircle2, ShieldCheck } from "lucide-react";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { AstraLogo } from "@/components/ui/astra-logo";
 import { BRAND } from "@/lib/constants";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface JoinMissionModalProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ interface JoinMissionModalProps {
 }
 
 export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -22,13 +23,14 @@ export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
     destination: "MARS EXPEDITION ONE",
   });
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const handleClose = useCallback(() => {
+    setSubmitted(false);
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
 
     if (isOpen) {
@@ -36,14 +38,13 @@ export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
       window.addEventListener("keydown", handleKeyDown);
     } else {
       document.body.style.overflow = "";
-      setSubmitted(false);
     }
 
     return () => {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +58,7 @@ export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Join ASTRA Mission Cadet Program"
-      onClick={onClose}
+      onClick={handleClose}
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
     >
       <div
@@ -83,7 +84,7 @@ export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             type="button"
             className="p-2 text-slate-400 hover:text-white rounded-md hover:bg-slate-800 transition-colors"
             aria-label="Close Enrollment Modal"

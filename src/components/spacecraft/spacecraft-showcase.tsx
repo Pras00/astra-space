@@ -3,15 +3,8 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Rocket,
-  ShieldCheck,
-  Zap,
-  Gauge,
-  Layers,
-  ArrowRight,
-} from "lucide-react";
-import { SPACECRAFT_FLEET, Spacecraft } from "@/data/spacecraft";
+import { ArrowRight } from "lucide-react";
+import { SPACECRAFT_FLEET } from "@/data/spacecraft";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { HudBadge } from "@/components/ui/hud-badge";
 

@@ -39,12 +39,12 @@ export function PlanetViewer({ destination }: PlanetViewerProps) {
         powerPreference: "high-performance",
       });
     } catch {
-      setWebglError(true);
+      queueMicrotask(() => setWebglError(true));
       return;
     }
 
     if (!renderer || !renderer.domElement) {
-      setWebglError(true);
+      queueMicrotask(() => setWebglError(true));
       return;
     }
 
@@ -314,7 +314,7 @@ export function PlanetViewer({ destination }: PlanetViewerProps) {
         cloudsMesh.geometry.dispose();
       }
     };
-  }, [destination.id, autoRotate, reducedMotion]);
+  }, [destination, autoRotate, reducedMotion]);
 
   if (webglError) {
     return (

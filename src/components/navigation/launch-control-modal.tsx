@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Radio, Compass, ShieldAlert, Cpu, ExternalLink } from "lucide-react";
+import { X, Radio, Compass, Cpu } from "lucide-react";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { AstraLogo } from "@/components/ui/astra-logo";
 import { BRAND } from "@/lib/constants";
 import { ACTIVE_PROBE_TELEMETRY } from "@/data/telemetry";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface LaunchControlModalProps {
   isOpen: boolean;
@@ -14,11 +15,7 @@ interface LaunchControlModalProps {
 }
 
 export function LaunchControlModal({ isOpen, onClose }: LaunchControlModalProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -69,7 +66,7 @@ export function LaunchControlModal({ isOpen, onClose }: LaunchControlModalProps)
                 </HudBadge>
               </div>
               <p className="font-mono text-xs text-slate-400">
-                STATION ID: {BRAND.hq} // {BRAND.coordinates}
+                STATION ID: {BRAND.hq} {"//"} {BRAND.coordinates}
               </p>
             </div>
           </div>

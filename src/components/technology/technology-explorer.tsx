@@ -8,8 +8,6 @@ import {
   Shield,
   Radio,
   Activity,
-  Layers,
-  CheckCircle,
   Crosshair,
 } from "lucide-react";
 import { TECHNOLOGIES, TechnologyItem } from "@/data/technologies";
@@ -217,7 +215,7 @@ export function TechnologyExplorer() {
                           : "bg-slate-900/90 border-slate-700 text-slate-400 opacity-0 group-hover:opacity-100"
                       }`}
                     >
-                      {tech.tag} // {tech.title.split(" ")[0]}
+                      {tech.tag} {"//"} {tech.title.split(" ")[0]}
                     </span>
                   </button>
                 );

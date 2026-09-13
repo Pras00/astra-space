@@ -4,7 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Compass, Thermometer, Orbit, Gauge, Activity } from "lucide-react";
-import { DESTINATIONS, Destination } from "@/data/destinations";
+import { DESTINATIONS } from "@/data/destinations";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { FallbackCanvas } from "@/components/3d/fallback-canvas";

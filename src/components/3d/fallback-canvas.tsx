@@ -34,7 +34,7 @@ export function FallbackCanvas({
 
         {/* Planet name HUD stamp */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-widest text-white/40 uppercase">
-          {planetName} // OPTICAL SIMULATION
+          {planetName} {"//"} OPTICAL SIMULATION
         </div>
       </div>
     </div>

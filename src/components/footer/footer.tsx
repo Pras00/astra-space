@@ -1,5 +1,5 @@
 import { BRAND, NAV_LINKS } from "@/lib/constants";
-import { Compass, ShieldCheck, ExternalLink, ArrowUp } from "lucide-react";
+import { ShieldCheck, ExternalLink, ArrowUp } from "lucide-react";
 import { AstraLogo } from "@/components/ui/astra-logo";
 
 export function Footer() {
@@ -21,7 +21,7 @@ export function Footer() {
             </p>
 
             <div className="pt-2 font-mono text-xs text-slate-400 space-y-1">
-              <div>ASTRA EXPLORATION SYSTEMS // EST. {BRAND.established}</div>
+              <div>ASTRA EXPLORATION SYSTEMS {"//"} EST. {BRAND.established}</div>
               <div>SPACEPORT ONE: {BRAND.coordinates}</div>
             </div>
           </div>

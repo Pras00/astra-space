@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Flame, Compass, Shield, ArrowUpRight } from "lucide-react";
+import { Flame, Compass, Shield } from "lucide-react";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 

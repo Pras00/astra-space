@@ -64,7 +64,7 @@ export function StarField() {
       });
     }
 
-    let shootingStars: ShootingStar[] = [];
+    const shootingStars: ShootingStar[] = [];
     let lastShootingStarTime = Date.now();
 
     const handleResize = () => {

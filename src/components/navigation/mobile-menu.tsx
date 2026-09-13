@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, ChevronRight, Radio } from "lucide-react";
 import { NAV_LINKS, BRAND } from "@/lib/constants";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { AstraLogo } from "@/components/ui/astra-logo";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -18,11 +19,7 @@ export function MobileMenu({
   onClose,
   onOpenLaunchControl,
 }: MobileMenuProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   useEffect(() => {
     if (isOpen) {
@@ -98,7 +95,7 @@ export function MobileMenu({
         </button>
 
         <div className="flex items-center justify-between text-[11px] font-mono text-slate-500">
-          <span>{BRAND.established} // DEEP CISLUNAR</span>
+          <span>{BRAND.established} {"//"} DEEP CISLUNAR</span>
           <span>SYSTEM VER 4.2</span>
         </div>
       </div>

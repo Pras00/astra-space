@@ -27,12 +27,12 @@ export function EarthScene() {
         powerPreference: "high-performance",
       });
     } catch {
-      setWebglError(true);
+      queueMicrotask(() => setWebglError(true));
       return;
     }
 
     if (!renderer || !renderer.domElement) {
-      setWebglError(true);
+      queueMicrotask(() => setWebglError(true));
       return;
     }
 

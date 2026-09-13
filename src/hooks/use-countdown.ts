@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useMounted } from "./use-mounted";
 
 export interface CountdownTime {
   days: string;
@@ -12,7 +13,7 @@ export interface CountdownTime {
 }
 
 export function useCountdown(targetDateTimestamp: number): CountdownTime {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [timeLeft, setTimeLeft] = useState<{
     days: string;
     hours: string;
@@ -28,8 +29,6 @@ export function useCountdown(targetDateTimestamp: number): CountdownTime {
   });
 
   useEffect(() => {
-    setMounted(true);
-
     const calculateTime = () => {
       const difference = targetDateTimestamp - Date.now();
 

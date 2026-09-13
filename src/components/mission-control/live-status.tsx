@@ -7,8 +7,6 @@ import {
   Activity,
   Compass,
   Cpu,
-  ShieldCheck,
-  Zap,
 } from "lucide-react";
 import { ACTIVE_PROBE_TELEMETRY } from "@/data/telemetry";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -70,7 +68,7 @@ export function LiveStatus() {
               <div>
                 <div className="flex items-center gap-2.5">
                   <h3 className="font-orbitron font-extrabold text-xl sm:text-2xl text-white tracking-wider">
-                    {ACTIVE_PROBE_TELEMETRY.missionId} // {ACTIVE_PROBE_TELEMETRY.vehicleName}
+                    {ACTIVE_PROBE_TELEMETRY.missionId} {"//"} {ACTIVE_PROBE_TELEMETRY.vehicleName}
                   </h3>
                   <HudBadge variant="emerald" pulse>
                     {ACTIVE_PROBE_TELEMETRY.missionStatus}

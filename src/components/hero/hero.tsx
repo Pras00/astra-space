@@ -31,7 +31,7 @@ export function Hero() {
               ASTRA MISSION ARCHITECTURE
             </HudBadge>
             <span className="hidden sm:inline-block font-mono text-xs text-slate-400 tracking-wider">
-              // EST. {BRAND.established}
+              {"//"} EST. {BRAND.established}
             </span>
           </div>
 
