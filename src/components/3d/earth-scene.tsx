@@ -295,7 +295,7 @@ export function EarthScene() {
     <div className="relative w-full h-full flex flex-col items-center justify-center select-none">
       <div
         ref={containerRef}
-        className="w-full h-[380px] sm:h-[480px] md:h-[560px] lg:h-[620px] flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
+        className="w-full h-95 sm:h-120 md:h-140 lg:h-155 flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
         aria-label="Interactive 3D Earth visualization. Click and drag to spin."
       />
 
