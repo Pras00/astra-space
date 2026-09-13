@@ -1,0 +1,19 @@
+<svg width="128" height="128" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="22" fill="#080E1E" stroke="#38BDF8" stroke-width="2.5"/>
+  
+  <!-- Outer subtle radar boundary -->
+  <circle cx="50" cy="50" r="42" stroke="#1E293B" stroke-width="1.5" stroke-dasharray="3 4"/>
+
+  <!-- Orbital Trajectory Arc (Thick & Vibrant Cyan) -->
+  <path d="M 12,65 C 20,38 65,24 86,28" stroke="#38BDF8" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Ascending Delta Wing Chevron 'A' (Solid Pure Brilliant White) -->
+  <path d="M 50,14 L 20,82 L 36,75 L 50,44 L 64,75 L 80,82 Z" fill="#FFFFFF"/>
+
+  <!-- Core Aerospace Notch -->
+  <path d="M 50,48 L 38,74 L 50,65 L 62,74 Z" fill="#080E1E"/>
+
+  <!-- Trans-orbital Celestial Beacon Node -->
+  <circle cx="86" cy="28" r="7.5" fill="#38BDF8"/>
+  <circle cx="86" cy="28" r="3" fill="#FFFFFF"/>
+</svg>
