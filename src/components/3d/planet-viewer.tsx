@@ -584,7 +584,7 @@ export function PlanetViewer({
   }
 
   return (
-    <div className="relative w-full h-56 sm:h-72 lg:h-96 flex flex-col items-center justify-center select-none">
+    <div className="relative w-full h-44 sm:h-60 lg:h-96 flex flex-col items-center justify-center select-none">
       <div
         ref={containerRef}
         className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing touch-pan-y"
@@ -592,29 +592,29 @@ export function PlanetViewer({
       />
 
       {/* Industrial Optical Controls */}
-      <div className="absolute top-3 right-3 z-20 flex flex-col border border-hairline-strong bg-carbon/90 divide-y divide-hairline">
+      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 flex flex-col border border-hairline-strong bg-carbon/90 divide-y divide-hairline">
         <button
           type="button"
           onClick={() => controlsRef.current?.zoomIn()}
-          className="p-2 text-titanium hover:text-bone hover:bg-graphite transition-colors cursor-pointer"
+          className="p-1.5 sm:p-2 text-titanium hover:text-bone hover:bg-graphite transition-colors cursor-pointer"
           aria-label="Zoom In"
           title="Zoom In"
         >
-          <ZoomIn className="w-3.5 h-3.5" aria-hidden="true" />
+          <ZoomIn className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
         </button>
         <button
           type="button"
           onClick={() => controlsRef.current?.zoomOut()}
-          className="p-2 text-titanium hover:text-bone hover:bg-graphite transition-colors cursor-pointer"
+          className="p-1.5 sm:p-2 text-titanium hover:text-bone hover:bg-graphite transition-colors cursor-pointer"
           aria-label="Zoom Out"
           title="Zoom Out"
         >
-          <ZoomOut className="w-3.5 h-3.5" aria-hidden="true" />
+          <ZoomOut className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
         </button>
         <button
           type="button"
           onClick={() => setAutoRotate(!autoRotate)}
-          className={`p-2 transition-colors cursor-pointer ${
+          className={`p-1.5 sm:p-2 transition-colors cursor-pointer ${
             autoRotate
               ? "text-signal bg-signal-muted"
               : "text-titanium hover:text-bone hover:bg-graphite"
@@ -624,26 +624,26 @@ export function PlanetViewer({
           title={autoRotate ? "Pause Orbital Spin" : "Resume Orbital Spin"}
         >
           {autoRotate ? (
-            <Pause className="w-3.5 h-3.5" aria-hidden="true" />
+            <Pause className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
           ) : (
-            <Play className="w-3.5 h-3.5" aria-hidden="true" />
+            <Play className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
           )}
         </button>
         <button
           type="button"
           onClick={() => controlsRef.current?.resetRotation()}
-          className="p-2 text-titanium hover:text-bone hover:bg-graphite transition-colors cursor-pointer"
+          className="p-1.5 sm:p-2 text-titanium hover:text-bone hover:bg-graphite transition-colors cursor-pointer"
           aria-label="Reset Datum Axis"
           title="Reset Datum Axis"
         >
-          <RotateCw className="w-3.5 h-3.5" aria-hidden="true" />
+          <RotateCw className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" />
         </button>
       </div>
 
       {/* Surface Outpost Beacons Selector */}
       {destination.outposts.length > 0 && (
-        <div className="absolute bottom-2.5 left-2.5 right-2.5 z-20 flex flex-wrap items-center justify-between gap-1.5 pointer-events-none">
-          <span className="px-2 py-0.5 bg-carbon/90 border border-hairline text-3xs font-mono text-ash uppercase tracking-widest">
+        <div className="absolute bottom-1.5 left-1.5 right-1.5 sm:bottom-2.5 sm:left-2.5 sm:right-2.5 z-20 flex flex-wrap items-center justify-between gap-1.5 pointer-events-none">
+          <span className="hidden sm:inline-block px-2 py-0.5 bg-carbon/90 border border-hairline text-3xs font-mono text-ash uppercase tracking-widest">
             SURFACE SITES ({destination.outposts.length})
           </span>
 
@@ -673,7 +673,9 @@ export function PlanetViewer({
                     }`}
                     aria-hidden="true"
                   />
-                  <span className="truncate max-w-32">{outpost.name}</span>
+                  <span className="truncate max-w-28 sm:max-w-32">
+                    {outpost.name}
+                  </span>
                 </button>
               );
             })}
@@ -683,17 +685,19 @@ export function PlanetViewer({
 
       {/* Outpost Telemetry Callout */}
       {activeOutpost && (
-        <div className="absolute top-3 left-3 z-20 p-3 bg-carbon/95 border border-signal max-w-xs">
-          <div className="flex items-center justify-between gap-3 border-b border-hairline pb-1.5 mb-1.5">
-            <span className="font-display font-bold text-xs text-bone uppercase">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20 p-2 sm:p-3 bg-carbon/95 border border-signal max-w-xs">
+          <div className="flex items-center justify-between gap-3 border-b border-hairline pb-1 mb-1 sm:pb-1.5 sm:mb-1.5">
+            <span className="font-display font-bold text-2xs sm:text-xs text-bone uppercase">
               {activeOutpost.name}
             </span>
             <span className="font-mono text-3xs text-signal font-semibold uppercase">
               {activeOutpost.status}
             </span>
           </div>
-          <p className="text-xs text-titanium">{activeOutpost.type}</p>
-          <div className="mt-1 text-3xs font-mono text-ash tabular-nums">
+          <p className="text-2xs sm:text-xs text-titanium">
+            {activeOutpost.type}
+          </p>
+          <div className="mt-0.5 sm:mt-1 text-3xs font-mono text-ash tabular-nums">
             LAT {activeOutpost.lat}° — LON {activeOutpost.lon}°
           </div>
         </div>

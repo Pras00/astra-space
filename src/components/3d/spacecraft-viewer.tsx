@@ -891,7 +891,7 @@ export function SpacecraftViewer({
 
   if (!webglSupported || webglError) {
     return (
-      <div className="w-full h-56 sm:h-72 lg:h-92 flex items-center justify-center p-8 border border-hairline bg-obsidian">
+      <div className="w-full h-40 sm:h-60 lg:h-92 flex items-center justify-center p-6 border border-hairline bg-obsidian">
         <div className="px-4 py-3 border border-signal text-bone font-mono text-2xs uppercase tracking-widest">
           {spacecraft.name} — STRUCTURAL CAD READY
         </div>
@@ -902,7 +902,7 @@ export function SpacecraftViewer({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-56 sm:h-72 lg:h-92 flex items-center justify-center cursor-grab active:cursor-grabbing touch-pan-y select-none"
+      className="relative w-full h-40 sm:h-60 lg:h-92 flex items-center justify-center cursor-grab active:cursor-grabbing touch-pan-y select-none"
       aria-label={`3D orbital hull inspection of ${spacecraft.name}. Drag or scroll to rotate.`}
     />
   );

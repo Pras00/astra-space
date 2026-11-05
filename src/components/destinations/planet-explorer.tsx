@@ -36,7 +36,7 @@ export function PlanetExplorer() {
     stageProgress,
     totalRunwayVh,
     jumpToStage,
-  } = usePinnedStage(PLANET_STAGES, 92);
+  } = usePinnedStage(PLANET_STAGES, 110);
 
   const selectedDest = DESTINATIONS[activeIndex] ?? DESTINATIONS[0];
   const stagePct = Math.round(stageProgress * 100);
@@ -50,21 +50,23 @@ export function PlanetExplorer() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* Top Architectural Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 mb-5 border-b border-hairline">
-          <div>
-            <div className="flex items-center gap-3 font-mono text-2xs uppercase tracking-widest text-ash mb-1.5">
+        <div className="flex items-end justify-between gap-3 pb-2 mb-2.5 sm:pb-4 sm:mb-5 border-b border-hairline">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 sm:gap-3 font-mono text-3xs sm:text-2xs uppercase tracking-widest text-ash mb-0.5 sm:mb-1.5">
               <span className="text-signal font-semibold">01</span>
-              <span className="w-4 h-px bg-hairline-strong" />
-              <span>PLANETARY SURVEY — SCROLL-DRIVEN ORBITAL LOCK</span>
+              <span className="w-3 sm:w-4 h-px bg-hairline-strong shrink-0" />
+              <span className="truncate">
+                PLANETARY SURVEY — SCROLL-DRIVEN ORBITAL LOCK
+              </span>
             </div>
-            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-tighter text-bone leading-none">
+            <h2 className="font-display text-xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tighter text-bone leading-none">
               TARGET WORLDS
             </h2>
           </div>
 
-          <div className="flex items-center gap-4 font-mono text-3xs uppercase tracking-widest text-ash tabular-nums">
+          <div className="flex items-center gap-2.5 sm:gap-4 font-mono text-3xs uppercase tracking-widest text-ash tabular-nums shrink-0">
             <span>
-              BODY 0{activeIndex + 1} OF 0{DESTINATIONS.length}
+              BODY 0{activeIndex + 1}/0{DESTINATIONS.length}
             </span>
             <span className="text-signal">
               PASS {stagePct.toString().padStart(3, "0")}%
@@ -73,17 +75,17 @@ export function PlanetExplorer() {
         </div>
 
         {/* 3-Zone Pinned Inspection Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-4 lg:gap-8 items-center">
           {/* Left Rail: Scroll-Synced Celestial Stage Index */}
           <div
             role="tablist"
             aria-label="Celestial Bodies"
-            className="lg:col-span-3 flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0"
+            className="lg:col-span-3 flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0"
           >
             {DESTINATIONS.map((dest, idx) => {
               const isActive = idx === activeIndex;
               const fillWidth = isActive
-                ? `${Math.max(8, Math.round(stageProgress * 100))}%`
+                ? `${Math.max(12, Math.round(stageProgress * 100))}%`
                 : idx < activeIndex
                 ? "100%"
                 : "0%";
@@ -97,14 +99,14 @@ export function PlanetExplorer() {
                   aria-controls={`planet-panel-${dest.id}`}
                   id={`planet-tab-${dest.id}`}
                   onClick={() => jumpToStage(idx)}
-                  className={`relative text-left px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-none border transition-colors shrink-0 lg:shrink cursor-pointer overflow-hidden ${
+                  className={`relative text-left px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-none border transition-colors shrink-0 lg:shrink cursor-pointer overflow-hidden ${
                     isActive
                       ? "bg-carbon border-signal text-bone"
                       : "bg-obsidian border-hairline text-ash hover:text-bone hover:border-hairline-strong"
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-3 font-mono text-2xs uppercase tracking-wider">
-                    <span className="flex items-center gap-2">
+                  <div className="flex items-center justify-between gap-2 sm:gap-3 font-mono text-3xs sm:text-2xs uppercase tracking-wider">
+                    <span className="flex items-center gap-1.5 sm:gap-2">
                       <span
                         className={
                           isActive ? "text-signal font-bold" : "text-ash"
@@ -148,67 +150,67 @@ export function PlanetExplorer() {
                 id={`planet-panel-${selectedDest.id}`}
                 role="tabpanel"
                 aria-labelledby={`planet-tab-${selectedDest.id}`}
-                initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+                initial={reducedMotion ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reducedMotion ? undefined : { opacity: 0, y: -14 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-                className="border border-hairline bg-carbon p-4 sm:p-5 space-y-4"
+                exit={reducedMotion ? undefined : { opacity: 0, y: -12 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="border border-hairline bg-carbon p-3 sm:p-5 space-y-2 sm:space-y-4"
               >
-                <div className="flex items-start justify-between gap-3 border-b border-hairline pb-3">
-                  <div>
-                    <span className="font-mono text-3xs text-ash uppercase tracking-widest block mb-1">
+                <div className="flex items-start justify-between gap-3 border-b border-hairline pb-2 sm:pb-3">
+                  <div className="min-w-0">
+                    <span className="font-mono text-3xs text-ash uppercase tracking-widest block mb-0.5 sm:mb-1 truncate">
                       {selectedDest.coordinates}
                     </span>
-                    <h3 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tighter text-bone">
+                    <h3 className="font-display text-xl sm:text-3xl font-bold uppercase tracking-tighter text-bone leading-none">
                       {selectedDest.name}
                     </h3>
-                    <p className="text-xs text-titanium mt-0.5">
+                    <p className="text-2xs sm:text-xs text-titanium mt-0.5 truncate">
                       {selectedDest.subtitle}
                     </p>
                   </div>
                   <HudBadge variant="signal">{selectedDest.status}</HudBadge>
                 </div>
 
-                <p className="text-xs sm:text-sm text-titanium leading-relaxed">
+                <p className="text-2xs sm:text-sm text-titanium leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
                   {selectedDest.description}
                 </p>
 
                 <div className="grid grid-cols-2 border border-hairline divide-x divide-y divide-hairline bg-obsidian font-mono">
-                  <div className="p-2.5">
+                  <div className="p-1.5 sm:p-2.5">
                     <span className="text-3xs text-ash uppercase tracking-widest block">
                       TRANSIT DIST
                     </span>
-                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
+                    <span className="text-2xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
                       {selectedDest.distance}
                     </span>
                   </div>
-                  <div className="p-2.5">
+                  <div className="p-1.5 sm:p-2.5">
                     <span className="text-3xs text-ash uppercase tracking-widest block">
                       SURFACE GRAVITY
                     </span>
-                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
+                    <span className="text-2xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
                       {selectedDest.gravity}
                     </span>
                   </div>
-                  <div className="p-2.5">
+                  <div className="p-1.5 sm:p-2.5">
                     <span className="text-3xs text-ash uppercase tracking-widest block">
                       MEAN TEMP
                     </span>
-                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
+                    <span className="text-2xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
                       {selectedDest.temperature}
                     </span>
                   </div>
-                  <div className="p-2.5">
+                  <div className="p-1.5 sm:p-2.5">
                     <span className="text-3xs text-ash uppercase tracking-widest block">
                       ORBITAL PERIOD
                     </span>
-                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
+                    <span className="text-2xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
                       {selectedDest.orbitalPeriod}
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-2 pt-1">
+                <div className="space-y-1 sm:space-y-2 pt-0.5 sm:pt-1">
                   <div className="flex items-center justify-between font-mono text-3xs uppercase tracking-widest">
                     <span className="text-ash">INFRASTRUCTURE READINESS</span>
                     <span className="text-signal font-bold tabular-nums">
@@ -221,7 +223,7 @@ export function PlanetExplorer() {
                       style={{ width: `${selectedDest.progress}%` }}
                     />
                   </div>
-                  <p className="font-mono text-3xs text-ash pt-1 leading-relaxed">
+                  <p className="font-mono text-3xs text-ash pt-0.5 leading-snug sm:leading-relaxed line-clamp-1 sm:line-clamp-none">
                     DIRECTIVE: {selectedDest.scientificGoal}
                   </p>
                 </div>

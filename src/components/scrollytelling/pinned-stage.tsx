@@ -22,7 +22,7 @@ export interface UsePinnedStageResult {
 
 export function usePinnedStage(
   stages: readonly StageDescriptor[],
-  vhPerStage: number = 95
+  vhPerStage: number = 110
 ): UsePinnedStageResult {
   const containerRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
@@ -43,9 +43,9 @@ export function usePinnedStage(
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 95,
-    damping: 26,
-    mass: 0.35,
+    stiffness: 90,
+    damping: 28,
+    mass: 0.38,
     restDelta: 0.0005,
   });
 
@@ -56,7 +56,15 @@ export function usePinnedStage(
     const count = stages.length;
     const scaled = clamped * count;
     const nextIndex = Math.min(count - 1, Math.floor(scaled));
-    const nextStageProgress = scaled - nextIndex;
+    const rawStageProgress = scaled - nextIndex;
+
+    // Dwell plateau at start (0..0.15) and end (0.85..1.0) of each stage
+    const nextStageProgress =
+      rawStageProgress <= 0.15
+        ? 0
+        : rawStageProgress >= 0.85
+        ? 1
+        : (rawStageProgress - 0.15) / 0.7;
 
     setScrollState((prev) => {
       if (
@@ -79,11 +87,7 @@ export function usePinnedStage(
       const container = containerRef.current;
       const safeIndex = Math.max(0, Math.min(stages.length - 1, targetIndex));
 
-      if (
-        !container ||
-        typeof window === "undefined" ||
-        window.innerWidth < 1024
-      ) {
+      if (!container || typeof window === "undefined") {
         setScrollState({
           activeIndex: safeIndex,
           stageProgress: 0.5,
@@ -108,7 +112,7 @@ export function usePinnedStage(
         return;
       }
 
-      const targetRatio = (safeIndex + 0.35) / stages.length;
+      const targetRatio = (safeIndex + 0.5) / stages.length;
       const targetScrollY = containerTop + scrollableDistance * targetRatio;
 
       window.scrollTo({
@@ -119,7 +123,7 @@ export function usePinnedStage(
     [stages.length, reducedMotion]
   );
 
-  const totalRunwayVh = Math.max(160, stages.length * vhPerStage);
+  const totalRunwayVh = Math.max(220, stages.length * vhPerStage);
 
   return {
     containerRef,
@@ -150,13 +154,10 @@ export function PinnedStageShell({
     <section
       id={id}
       ref={containerRef}
-      style={{ "--runway-vh": `${totalRunwayVh}vh` } as React.CSSProperties}
-      className={cn(
-        "relative border-b border-hairline lg:min-h-[var(--runway-vh)]",
-        className
-      )}
+      style={{ minHeight: `${totalRunwayVh}vh` }}
+      className={cn("relative border-b border-hairline", className)}
     >
-      <div className="relative py-12 sm:py-16 lg:py-0 lg:sticky lg:top-0 lg:min-h-svh w-full flex flex-col justify-center overflow-x-clip lg:pt-20 lg:pb-8">
+      <div className="sticky top-0 h-svh w-full flex flex-col justify-center overflow-hidden pt-18 pb-3 sm:pt-20 sm:pb-6 lg:pt-20 lg:pb-8">
         {children}
       </div>
     </section>
