@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import {
   motion,
+  AnimatePresence,
   useScroll,
   useSpring,
   useTransform,
@@ -46,7 +47,16 @@ export function MissionTimeline() {
   const jumpToMission = useCallback(
     (index: number) => {
       const container = sectionRef.current;
-      if (!container || typeof window === "undefined") return;
+      const safeIndex = Math.max(0, Math.min(MISSIONS.length - 1, index));
+
+      if (
+        !container ||
+        typeof window === "undefined" ||
+        window.innerWidth < 1024
+      ) {
+        setActiveIndex(safeIndex);
+        return;
+      }
 
       const rect = container.getBoundingClientRect();
       const containerTop = window.scrollY + rect.top;
@@ -106,14 +116,107 @@ export function MissionTimeline() {
     );
   }
 
+  const renderMissionCard = (
+    mission: (typeof MISSIONS)[number],
+    idx: number
+  ) => (
+    <article className="h-full border border-hairline-strong bg-carbon p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center hud-frame">
+      {/* Left Monumental Year & Telemetry */}
+      <div className="lg:col-span-5 space-y-4 border-b lg:border-b-0 lg:border-r border-hairline pb-5 lg:pb-0 lg:pr-7">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-xs text-ash uppercase tracking-widest">
+            FLIGHT PHASE 0{idx + 1} — {mission.code}
+          </span>
+          <HudBadge
+            variant={
+              mission.status === "CURRENT FLIGHT" ? "signal" : "neutral"
+            }
+            pulse={mission.status === "CURRENT FLIGHT"}
+          >
+            {mission.status}
+          </HudBadge>
+        </div>
+
+        <div className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter text-bone leading-none tabular-nums">
+          {mission.year}
+        </div>
+
+        <div className="grid grid-cols-3 border border-hairline divide-x divide-hairline bg-obsidian font-mono">
+          <div className="p-2 sm:p-2.5">
+            <span className="text-3xs text-ash uppercase block truncate">
+              DELTA-V
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-signal tabular-nums mt-0.5 block truncate">
+              {mission.trajectoryDeltaV}
+            </span>
+          </div>
+          <div className="p-2 sm:p-2.5">
+            <span className="text-3xs text-ash uppercase block truncate">
+              DURATION
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block truncate">
+              {mission.duration}
+            </span>
+          </div>
+          <div className="p-2 sm:p-2.5">
+            <span className="text-3xs text-ash uppercase block truncate">
+              MANIFEST
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-bone mt-0.5 block truncate">
+              {mission.crew}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Mission Narrative & Milestones */}
+      <div className="lg:col-span-7 space-y-4">
+        <div>
+          <span className="font-mono text-2xs text-signal uppercase tracking-widest block mb-1">
+            TARGET CORRIDOR — {mission.target}
+          </span>
+          <h3 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-bone">
+            {mission.title}
+          </h3>
+        </div>
+
+        <p className="text-xs sm:text-sm text-titanium leading-relaxed">
+          {mission.description}
+        </p>
+
+        <div className="space-y-2 pt-2 border-t border-hairline">
+          <span className="font-mono text-3xs text-ash uppercase tracking-widest block">
+            PRIMARY MISSION ARCHITECTURE GATES
+          </span>
+          <ul className="grid grid-cols-1 gap-1.5">
+            {mission.milestones.map((milestone) => (
+              <li
+                key={milestone}
+                className="flex items-center gap-3 px-3 py-2 bg-obsidian border border-hairline text-xs sm:text-sm text-bone"
+              >
+                <Check
+                  className="w-3.5 h-3.5 text-signal shrink-0"
+                  aria-hidden="true"
+                />
+                <span>{milestone}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </article>
+  );
+
   return (
     <section
       id="missions"
       ref={sectionRef}
-      style={{ minHeight: `${MISSIONS.length * 105}vh` }}
-      className="relative border-b border-hairline bg-obsidian"
+      style={
+        { "--runway-vh": `${MISSIONS.length * 105}vh` } as React.CSSProperties
+      }
+      className="relative border-b border-hairline bg-obsidian lg:min-h-[var(--runway-vh)]"
     >
-      <div className="sticky top-0 min-h-svh flex flex-col justify-center pt-20 pb-8 sm:pt-22 sm:pb-8 overflow-x-clip">
+      <div className="relative py-12 sm:py-16 lg:py-0 lg:sticky lg:top-0 lg:min-h-svh flex flex-col justify-center overflow-x-clip lg:pt-20 lg:pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           {/* Header + Scroll-Linked Flight Trajectory Ruler */}
           <div className="pb-4 mb-5 border-b border-hairline space-y-4">
@@ -146,7 +249,7 @@ export function MissionTimeline() {
                 />
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {MISSIONS.map((mission, idx) => {
                   const isCurrent = idx === activeIndex;
                   const isPassed = idx < activeIndex;
@@ -178,7 +281,7 @@ export function MissionTimeline() {
                           {mission.code}
                         </span>
                       </div>
-                      <div className="hidden md:block font-sans text-xs font-medium truncate mt-0.5">
+                      <div className="hidden sm:block font-sans text-xs font-medium truncate mt-0.5">
                         {mission.target}
                       </div>
                     </button>
@@ -188,8 +291,23 @@ export function MissionTimeline() {
             </div>
           </div>
 
-          {/* Horizontal Sliding Viewport */}
-          <div className="w-full overflow-hidden">
+          {/* Mobile & Tablet Interactive Card View (No clipping, natural height) */}
+          <div className="block lg:hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={MISSIONS[activeIndex]?.code}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {renderMissionCard(MISSIONS[activeIndex], activeIndex)}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Desktop Horizontal Sliding Viewport */}
+          <div className="w-full overflow-hidden hidden lg:block">
             <motion.div
               style={{
                 width: `${MISSIONS.length * 100}%`,
@@ -203,93 +321,7 @@ export function MissionTimeline() {
                   style={{ width: `${100 / MISSIONS.length}%` }}
                   className="shrink-0"
                 >
-                  <article className="h-full border border-hairline-strong bg-carbon p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center hud-frame">
-                    {/* Left Monumental Year & Telemetry */}
-                    <div className="lg:col-span-5 space-y-4 border-b lg:border-b-0 lg:border-r border-hairline pb-5 lg:pb-0 lg:pr-7">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono text-xs text-ash uppercase tracking-widest">
-                          FLIGHT PHASE 0{idx + 1} — {mission.code}
-                        </span>
-                        <HudBadge
-                          variant={
-                            mission.status === "CURRENT FLIGHT"
-                              ? "signal"
-                              : "neutral"
-                          }
-                          pulse={mission.status === "CURRENT FLIGHT"}
-                        >
-                          {mission.status}
-                        </HudBadge>
-                      </div>
-
-                      <div className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter text-bone leading-none tabular-nums">
-                        {mission.year}
-                      </div>
-
-                      <div className="grid grid-cols-3 border border-hairline divide-x divide-hairline bg-obsidian font-mono">
-                        <div className="p-2.5">
-                          <span className="text-3xs text-ash uppercase block">
-                            DELTA-V
-                          </span>
-                          <span className="text-xs sm:text-sm font-bold text-signal tabular-nums mt-0.5 block">
-                            {mission.trajectoryDeltaV}
-                          </span>
-                        </div>
-                        <div className="p-2.5">
-                          <span className="text-3xs text-ash uppercase block">
-                            DURATION
-                          </span>
-                          <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
-                            {mission.duration}
-                          </span>
-                        </div>
-                        <div className="p-2.5">
-                          <span className="text-3xs text-ash uppercase block">
-                            MANIFEST
-                          </span>
-                          <span className="text-xs sm:text-sm font-bold text-bone mt-0.5 block truncate">
-                            {mission.crew}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Mission Narrative & Milestones */}
-                    <div className="lg:col-span-7 space-y-4">
-                      <div>
-                        <span className="font-mono text-2xs text-signal uppercase tracking-widest block mb-1">
-                          TARGET CORRIDOR — {mission.target}
-                        </span>
-                        <h3 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-bone">
-                          {mission.title}
-                        </h3>
-                      </div>
-
-                      <p className="text-xs sm:text-sm text-titanium leading-relaxed">
-                        {mission.description}
-                      </p>
-
-                      <div className="space-y-2 pt-2 border-t border-hairline">
-                        <span className="font-mono text-3xs text-ash uppercase tracking-widest block">
-                          PRIMARY MISSION ARCHITECTURE GATES
-                        </span>
-                        <ul className="grid grid-cols-1 gap-1.5">
-                          {mission.milestones.map((milestone) => (
-                            <li
-                              key={milestone}
-                              className="flex items-center gap-3 px-3 py-2 bg-obsidian border border-hairline text-xs sm:text-sm text-bone"
-                            >
-                              <Check
-                                className="w-3.5 h-3.5 text-signal shrink-0"
-                                aria-hidden="true"
-                              />
-                              <span>{milestone}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </article>
+                  {renderMissionCard(mission, idx)}
                 </div>
               ))}
             </motion.div>

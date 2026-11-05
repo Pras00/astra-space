@@ -61,7 +61,7 @@ export function TechnologyExplorer() {
         <div
           role="tablist"
           aria-label="Spacecraft Subsystems"
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border border-hairline divide-x divide-y lg:divide-y-0 divide-hairline bg-carbon mb-3.5"
+          className="grid grid-cols-3 sm:grid-cols-6 border border-hairline divide-x divide-y sm:divide-y-0 divide-hairline bg-carbon mb-3.5"
         >
           {TECHNOLOGIES.map((tech, idx) => {
             const isActive = idx === activeIndex;
@@ -92,7 +92,7 @@ export function TechnologyExplorer() {
         {/* Blueprint Canvas + Spec Readout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch">
           {/* Left Column: Scroll-Scrubbed SVG Engineering Blueprint */}
-          <div className="lg:col-span-7 relative p-4 sm:p-5 border border-hairline bg-carbon blueprint-dots min-h-60 sm:min-h-72 lg:min-h-76 flex items-center justify-center overflow-hidden hud-frame">
+          <div className="lg:col-span-7 relative p-4 sm:p-5 border border-hairline bg-carbon blueprint-dots min-h-52 sm:min-h-64 lg:min-h-76 flex items-center justify-center overflow-hidden hud-frame touch-pan-y">
             {!reducedMotion && (
               <div
                 className="absolute top-0 bottom-0 w-px bg-signal/75 pointer-events-none z-10"

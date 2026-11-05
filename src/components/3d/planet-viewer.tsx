@@ -584,10 +584,10 @@ export function PlanetViewer({
   }
 
   return (
-    <div className="relative w-full h-76 sm:h-88 lg:h-96 flex flex-col items-center justify-center select-none">
+    <div className="relative w-full h-56 sm:h-72 lg:h-96 flex flex-col items-center justify-center select-none">
       <div
         ref={containerRef}
-        className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
+        className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing touch-pan-y"
         aria-label={`Interactive 3D ${destination.name} model. Drag to rotate.`}
       />
 

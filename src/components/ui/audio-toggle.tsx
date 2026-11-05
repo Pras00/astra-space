@@ -88,7 +88,7 @@ export function AudioToggle() {
     <button
       onClick={toggleSound}
       type="button"
-      className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 px-3.5 py-2.5 rounded-none border border-hairline-strong bg-carbon/95 text-3xs font-mono uppercase tracking-widest text-titanium hover:text-bone hover:border-signal transition-colors cursor-pointer"
+      className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-40 flex items-center gap-2.5 p-2.5 sm:px-3.5 sm:py-2.5 rounded-none border border-hairline-strong bg-carbon/95 text-3xs font-mono uppercase tracking-widest text-titanium hover:text-bone hover:border-signal transition-colors cursor-pointer"
       aria-label={isPlaying ? "Mute cabin acoustic feed" : "Enable cabin acoustic feed"}
       aria-pressed={isPlaying}
     >

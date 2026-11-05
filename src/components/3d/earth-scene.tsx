@@ -524,7 +524,7 @@ export function EarthScene({ scrollProgress = 0 }: EarthSceneProps) {
     <div className="relative w-full h-full flex flex-col items-center justify-center select-none">
       <div
         ref={containerRef}
-        className="w-full h-96 sm:h-112 md:h-124 lg:h-136 flex items-center justify-center cursor-grab active:cursor-grabbing touch-none"
+        className="w-full h-72 sm:h-96 md:h-112 lg:h-136 flex items-center justify-center cursor-grab active:cursor-grabbing touch-pan-y"
         aria-label="Interactive 3D Earth cislunar orbital model. Drag to rotate."
       />
 

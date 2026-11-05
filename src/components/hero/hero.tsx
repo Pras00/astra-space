@@ -67,7 +67,7 @@ export function Hero() {
               }
               className="lg:col-span-7 flex flex-col items-start text-left"
             >
-              <div className="flex flex-wrap items-center gap-3 mb-7">
+              <div className="flex flex-wrap items-center gap-3 mb-5 sm:mb-7">
                 <HudBadge variant="signal" pulse>
                   {BRAND.status}
                 </HudBadge>
@@ -76,13 +76,13 @@ export function Hero() {
                 </span>
               </div>
 
-              <h1 className="font-display text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-bold uppercase tracking-tighter text-bone leading-none mb-6">
+              <h1 className="font-display text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-bold uppercase tracking-tighter text-bone leading-none mb-5 sm:mb-6">
                 CISLUNAR &amp; <br />
                 DEEP-SPACE <br />
                 HEAVY FLIGHT.
               </h1>
 
-              <p className="font-sans text-base sm:text-lg text-titanium leading-relaxed mb-9 max-w-xl">
+              <p className="font-sans text-sm sm:text-base lg:text-lg text-titanium leading-relaxed mb-6 sm:mb-9 max-w-xl">
                 {BRAND.subtagline} Engineered for high-cadence payload delivery from low-Earth staging rings to Shackleton Crater and Jezero Basin.
               </p>
 

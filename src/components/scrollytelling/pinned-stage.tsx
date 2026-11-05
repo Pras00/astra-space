@@ -79,7 +79,11 @@ export function usePinnedStage(
       const container = containerRef.current;
       const safeIndex = Math.max(0, Math.min(stages.length - 1, targetIndex));
 
-      if (!container || typeof window === "undefined") {
+      if (
+        !container ||
+        typeof window === "undefined" ||
+        window.innerWidth < 1024
+      ) {
         setScrollState({
           activeIndex: safeIndex,
           stageProgress: 0.5,
@@ -146,10 +150,13 @@ export function PinnedStageShell({
     <section
       id={id}
       ref={containerRef}
-      style={{ minHeight: `${totalRunwayVh}vh` }}
-      className={cn("relative border-b border-hairline", className)}
+      style={{ "--runway-vh": `${totalRunwayVh}vh` } as React.CSSProperties}
+      className={cn(
+        "relative border-b border-hairline lg:min-h-[var(--runway-vh)]",
+        className
+      )}
     >
-      <div className="sticky top-0 min-h-svh w-full flex flex-col justify-center overflow-x-clip pt-20 pb-8 sm:pt-22 sm:pb-8">
+      <div className="relative py-12 sm:py-16 lg:py-0 lg:sticky lg:top-0 lg:min-h-svh w-full flex flex-col justify-center overflow-x-clip lg:pt-20 lg:pb-8">
         {children}
       </div>
     </section>

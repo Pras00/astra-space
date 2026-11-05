@@ -71,7 +71,7 @@ export function SpacecraftShowcase() {
           <div
             role="tablist"
             aria-label="ASTRA Spacecraft Fleet"
-            className="flex items-center border border-hairline-strong bg-carbon divide-x divide-hairline"
+            className="flex items-center w-full sm:w-auto border border-hairline-strong bg-carbon divide-x divide-hairline"
           >
             {SPACECRAFT_FLEET.map((craft, idx) => {
               const isActive = idx === activeIndex;
@@ -84,7 +84,7 @@ export function SpacecraftShowcase() {
                   aria-controls={`craft-panel-${craft.id}`}
                   id={`craft-tab-${craft.id}`}
                   onClick={() => jumpToStage(idx)}
-                  className={`relative px-4 py-2 font-mono text-2xs uppercase tracking-widest transition-colors cursor-pointer ${
+                  className={`relative flex-1 sm:flex-initial text-center px-3 sm:px-4 py-2 font-mono text-3xs sm:text-2xs uppercase tracking-widest transition-colors cursor-pointer ${
                     isActive
                       ? "bg-signal text-bone font-bold"
                       : "text-ash hover:text-bone hover:bg-graphite"

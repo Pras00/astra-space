@@ -97,14 +97,14 @@ export function PlanetExplorer() {
                   aria-controls={`planet-panel-${dest.id}`}
                   id={`planet-tab-${dest.id}`}
                   onClick={() => jumpToStage(idx)}
-                  className={`relative text-left px-3.5 py-3 rounded-none border transition-colors shrink-0 lg:shrink cursor-pointer overflow-hidden ${
+                  className={`relative text-left px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-none border transition-colors shrink-0 lg:shrink cursor-pointer overflow-hidden ${
                     isActive
                       ? "bg-carbon border-signal text-bone"
                       : "bg-obsidian border-hairline text-ash hover:text-bone hover:border-hairline-strong"
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-4 font-mono text-2xs uppercase tracking-wider">
-                    <span className="flex items-center gap-2.5">
+                  <div className="flex items-center justify-between gap-3 font-mono text-2xs uppercase tracking-wider">
+                    <span className="flex items-center gap-2">
                       <span
                         className={
                           isActive ? "text-signal font-bold" : "text-ash"
@@ -114,7 +114,7 @@ export function PlanetExplorer() {
                       </span>
                       <span className="font-semibold">{dest.name}</span>
                     </span>
-                    <span className="hidden xl:inline text-3xs text-ash tabular-nums">
+                    <span className="hidden sm:inline lg:hidden xl:inline text-3xs text-ash tabular-nums">
                       {dest.distance}
                     </span>
                   </div>
