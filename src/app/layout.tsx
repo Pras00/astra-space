@@ -1,12 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Orbitron, Space_Grotesk } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -14,30 +8,35 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const viewport: Viewport = {
-  themeColor: "#030712",
+  themeColor: "#060608",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
 };
 
 export const metadata: Metadata = {
-  title: "ASTRA — Beyond Earth. Explore What's Next.",
+  title: "ASTRA — Cislunar & Deep-Space Flight Systems",
   description:
-    "ASTRA is a next-generation space exploration organization engineering humanity's journey beyond Earth. Lunar infrastructure, Mars expeditions, and deep-space science.",
+    "ASTRA designs heavy-lift orbital logistics, nuclear thermal transit vehicles, and autonomous planetary infrastructure across Moon, Mars, and outer-system corridors.",
   keywords: [
     "ASTRA",
-    "space exploration",
-    "lunar mission",
-    "mars expedition",
-    "aerospace engineering",
+    "cislunar logistics",
+    "nuclear thermal propulsion",
+    "mars transit",
+    "aerospace systems",
     "deep space",
-    "spacecraft",
-    "interplanetary",
+    "spacecraft architecture",
   ],
-  authors: [{ name: "ASTRA Exploration Systems" }],
+  authors: [{ name: "ASTRA Flight Systems" }],
   creator: "ASTRA",
-  publisher: "ASTRA Systems",
+  publisher: "ASTRA Flight Systems",
   robots: {
     index: true,
     follow: true,
@@ -57,16 +56,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://astra.exploration",
-    title: "ASTRA — Beyond Earth. Explore What's Next.",
+    title: "ASTRA — Cislunar & Deep-Space Flight Systems",
     description:
-      "We engineer the missions that take humanity beyond the known. From orbital bases to deep-space propulsion.",
-    siteName: "ASTRA Exploration",
+      "Heavy orbital freighters, nuclear thermal interplanetary cruisers, and autonomous cryo-ocean probes.",
+    siteName: "ASTRA Flight Systems",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ASTRA — Beyond Earth. Explore What's Next.",
+    title: "ASTRA — Cislunar & Deep-Space Flight Systems",
     description:
-      "We engineer the missions that take humanity beyond the known. Lunar bases, Mars expeditions, and deep space research.",
+      "Heavy orbital freighters, nuclear thermal interplanetary cruisers, and autonomous cryo-ocean probes.",
   },
 };
 
@@ -78,13 +77,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${orbitron.variable} ${spaceGrotesk.variable} dark scroll-smooth`}
+      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} dark`}
     >
-      <body className="min-h-screen bg-[#030712] text-slate-100 font-sans selection:bg-sky-500/30 selection:text-white antialiased">
-        {/* Skip to content link for accessibility */}
+      <body className="min-h-screen bg-obsidian text-bone font-sans antialiased">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-sky-500 text-black font-semibold rounded outline-none"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-signal text-bone font-mono text-xs uppercase tracking-widest outline-none"
         >
           Skip to main content
         </a>

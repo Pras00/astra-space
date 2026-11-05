@@ -4,30 +4,38 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BRAND } from "@/lib/constants";
 import { AstraLogo } from "@/components/ui/astra-logo";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function InitialLoader() {
+  const reducedMotion = useReducedMotion();
   const [loading, setLoading] = useState(true);
-  const [statusText, setStatusText] = useState("INITIALIZING MISSION SYSTEMS...");
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
-    const timer1 = setTimeout(() => {
-      setStatusText("CALIBRATING ORBITAL TELEMETRY...");
-    }, 450);
+    if (reducedMotion) {
+      const quickTimer = setTimeout(() => setLoading(false), 150);
+      return () => clearTimeout(quickTimer);
+    }
 
-    const timer2 = setTimeout(() => {
-      setStatusText("ALL SYSTEMS ONLINE");
-    }, 900);
+    const startTime = performance.now();
+    const duration = 900;
+    let frameId = 0;
 
-    const timer3 = setTimeout(() => {
-      setLoading(false);
-    }, 1350);
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const ratio = Math.min(1, elapsed / duration);
+      setCounter(Math.round(ratio * 100));
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
+      if (ratio < 1) {
+        frameId = requestAnimationFrame(tick);
+      } else {
+        setTimeout(() => setLoading(false), 120);
+      }
     };
-  }, []);
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [reducedMotion]);
 
   return (
     <AnimatePresence>
@@ -35,39 +43,41 @@ export function InitialLoader() {
         <motion.div
           key="loader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030712] text-white select-none"
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="fixed inset-0 z-50 flex flex-col justify-between bg-obsidian text-bone p-6 sm:p-10 select-none film-grain"
         >
-          {/* Subtle Scanlines */}
-          <div className="absolute inset-0 scanlines opacity-30 pointer-events-none" />
-
-          {/* Logo Insignia */}
-          <div className="relative mb-6">
-            <AstraLogo size={64} />
+          {/* Top Telemetry Header */}
+          <div className="flex items-center justify-between font-mono text-3xs text-ash uppercase tracking-widest border-b border-hairline pb-4">
+            <span>{BRAND.name} — {BRAND.division}</span>
+            <span>{BRAND.coordinates}</span>
           </div>
 
-          <h1 className="font-orbitron font-extrabold text-2xl tracking-[0.3em] text-white mb-3">
-            {BRAND.name}
-          </h1>
+          {/* Center Calibration Readout */}
+          <div className="my-auto flex flex-col items-start max-w-md w-full mx-auto">
+            <AstraLogo size={42} className="mb-8" />
+            <div className="w-full flex items-baseline justify-between mb-3">
+              <span className="font-mono text-2xs text-ash uppercase tracking-widest">
+                AVIONICS BUS CALIBRATION
+              </span>
+              <span className="font-mono text-2xl font-bold text-bone tabular-nums">
+                {counter.toString().padStart(3, "0")}%
+              </span>
+            </div>
 
-          {/* Progress Bar */}
-          <div className="w-48 h-1 bg-slate-900 rounded-full overflow-hidden border border-slate-800 mb-3">
-            <motion.div
-              initial={{ width: "0%" }}
-              animate={{ width: "100%" }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-              className="h-full bg-gradient-to-r from-sky-500 via-indigo-500 to-sky-300 rounded-full"
-            />
+            <div className="w-full h-px bg-steel relative overflow-hidden">
+              <div
+                className="h-full bg-signal transition-none"
+                style={{ width: `${counter}%` }}
+              />
+            </div>
           </div>
 
-          <p className="font-mono text-xs text-sky-400 tracking-widest uppercase">
-            {statusText}
-          </p>
-
-          <span className="absolute bottom-8 font-mono text-[10px] text-slate-400">
-            ASTRA FLIGHT PROTOCOL // SECURE TERMINAL
-          </span>
+          {/* Bottom Protocol Stamp */}
+          <div className="flex items-center justify-between font-mono text-3xs text-ash uppercase tracking-widest border-t border-hairline pt-4">
+            <span>FLIGHT COMPUTER SYNCHRONIZED</span>
+            <span className="text-signal">NOMINAL</span>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

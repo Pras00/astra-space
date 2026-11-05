@@ -1,24 +1,40 @@
+export interface NavLinkItem {
+  readonly code: string;
+  readonly label: string;
+  readonly href: string;
+}
+
+export interface HeroMetricItem {
+  readonly label: string;
+  readonly value: string;
+  readonly unit: string;
+}
+
 export const BRAND = {
   name: "ASTRA",
-  tagline: "Beyond Earth. Explore What's Next.",
-  subtagline: "We engineer the missions that take humanity beyond the known.",
+  division: "FLIGHT SYSTEMS",
+  tagline: "Cislunar & Deep-Space Heavy Infrastructure.",
+  subtagline:
+    "Closed-cycle methalox freighters, nuclear thermal transit cruisers, and autonomous planetary surface outposts.",
   established: 2028,
-  coordinates: "28.5721° N, 80.6480° W", // Cape Canaveral launch coordinate homage
-  hq: "ASTRA Spaceport One, Star Harbor",
-  status: "MISSION SYSTEMS OPERATIONAL",
+  coordinates: "28.5721° N, 80.6480° W",
+  hq: "PAD 39-OMEGA // CAPE CANAVERAL",
+  status: "FLIGHT TELEMETRY NOMINAL",
+  primaryCta: "Request Payload Manifest",
+  secondaryCta: "Inspect Trajectory",
 } as const;
 
-export const NAV_LINKS = [
-  { label: "Destinations", href: "#destinations" },
-  { label: "Missions", href: "#missions" },
-  { label: "Spacecraft", href: "#spacecraft" },
-  { label: "Technology", href: "#technology" },
-  { label: "Mission Control", href: "#mission-control" },
+export const NAV_LINKS: readonly NavLinkItem[] = [
+  { code: "01", label: "Destinations", href: "#destinations" },
+  { code: "02", label: "Trajectory", href: "#missions" },
+  { code: "03", label: "Fleet", href: "#spacecraft" },
+  { code: "04", label: "Subsystems", href: "#technology" },
+  { code: "05", label: "Telemetry", href: "#mission-control" },
 ] as const;
 
-export const HERO_METRICS = [
-  { label: "FLIGHT CORRIDOR", value: "DEEP CISLUNAR" },
-  { label: "ACTIVE VEHICLES", value: "03 IN FLIGHT" },
-  { label: "TELEMETRY LINK", value: "98.7% SIGNAL" },
-  { label: "DELTA-V CAPACITY", value: "14.2 KM/S" },
+export const HERO_METRICS: readonly HeroMetricItem[] = [
+  { label: "LEO PAYLOAD", value: "150,000", unit: "KG" },
+  { label: "TLI PAYLOAD", value: "42,000", unit: "KG" },
+  { label: "NTR SPECIFIC IMPULSE", value: "925", unit: "SEC" },
+  { label: "ACTIVE FLIGHT VEHICLES", value: "03", unit: "IN TRANSIT" },
 ] as const;

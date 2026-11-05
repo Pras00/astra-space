@@ -1,39 +1,37 @@
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+export type HudBadgeVariant = "signal" | "neutral" | "solid";
+
 interface HudBadgeProps {
-  children: ReactNode;
-  variant?: "cyan" | "emerald" | "amber" | "slate" | "violet";
-  pulse?: boolean;
-  className?: string;
+  readonly children: ReactNode;
+  readonly variant?: HudBadgeVariant;
+  readonly pulse?: boolean;
+  readonly className?: string;
 }
 
 export function HudBadge({
   children,
-  variant = "cyan",
+  variant = "neutral",
   pulse = false,
   className,
 }: HudBadgeProps) {
-  const variantStyles = {
-    cyan: "border-sky-500/30 text-sky-300 bg-sky-950/40",
-    emerald: "border-emerald-500/30 text-emerald-300 bg-emerald-950/40",
-    amber: "border-amber-500/30 text-amber-300 bg-amber-950/40",
-    slate: "border-slate-700/60 text-slate-300 bg-slate-900/60",
-    violet: "border-indigo-500/30 text-indigo-300 bg-indigo-950/40",
+  const variantStyles: Record<HudBadgeVariant, string> = {
+    signal: "border-signal/50 text-signal bg-signal-muted",
+    neutral: "border-hairline-strong text-titanium bg-carbon",
+    solid: "border-signal bg-signal text-bone font-semibold",
   };
 
-  const dotStyles = {
-    cyan: "bg-sky-400",
-    emerald: "bg-emerald-400",
-    amber: "bg-amber-400",
-    slate: "bg-slate-400",
-    violet: "bg-indigo-400",
+  const dotStyles: Record<HudBadgeVariant, string> = {
+    signal: "bg-signal",
+    neutral: "bg-bone",
+    solid: "bg-bone",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[11px] font-mono uppercase tracking-widest border backdrop-blur-md select-none",
+        "inline-flex items-center gap-2 px-2.5 py-1 rounded-none text-3xs font-mono uppercase tracking-widest border select-none",
         variantStyles[variant],
         className
       )}
@@ -42,13 +40,13 @@ export function HudBadge({
         <span className="relative flex h-1.5 w-1.5">
           <span
             className={cn(
-              "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+              "animate-ping absolute inline-flex h-full w-full opacity-75",
               dotStyles[variant]
             )}
           />
           <span
             className={cn(
-              "relative inline-flex rounded-full h-1.5 w-1.5",
+              "relative inline-flex h-1.5 w-1.5",
               dotStyles[variant]
             )}
           />

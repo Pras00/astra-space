@@ -1,122 +1,102 @@
 import { BRAND, NAV_LINKS } from "@/lib/constants";
-import { ShieldCheck, ExternalLink, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { AstraLogo } from "@/components/ui/astra-logo";
 
 export function Footer() {
   return (
-    <footer className="relative bg-slate-950 border-t border-slate-900 pt-16 pb-12 overflow-hidden text-slate-400 font-space">
+    <footer className="relative bg-obsidian pt-16 pb-12 text-ash font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-16 border-b border-slate-900">
-          {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <AstraLogo size={36} />
-              <span className="font-orbitron font-bold text-xl tracking-[0.25em] text-white">
-                {BRAND.name}
-              </span>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-14 border-b border-hairline">
+          {/* Brand Engineering Stamp */}
+          <div className="lg:col-span-5 space-y-4">
+            <AstraLogo size={34} showWordmark />
 
-            <p className="text-sm text-slate-400 max-w-sm leading-relaxed font-light">
-              {BRAND.tagline} Developing high-frequency cislunar logistics, permanent Martian colonies, and autonomous deep-space probes.
+            <p className="text-sm text-ash max-w-sm leading-relaxed pt-1">
+              {BRAND.tagline} Heavy-lift cislunar freighters, nuclear thermal interplanetary cruisers, and autonomous surface infrastructure.
             </p>
 
-            <div className="pt-2 font-mono text-xs text-slate-400 space-y-1">
-              <div>ASTRA EXPLORATION SYSTEMS {"//"} EST. {BRAND.established}</div>
-              <div>SPACEPORT ONE: {BRAND.coordinates}</div>
+            <div className="pt-2 font-mono text-3xs text-ash uppercase tracking-widest space-y-1">
+              <div>{BRAND.hq}</div>
+              <div>DATUM: {BRAND.coordinates}</div>
             </div>
           </div>
 
-          {/* Navigation Column */}
-          <div>
-            <span className="font-orbitron text-xs font-bold uppercase tracking-widest text-white block mb-4">
-              EXPEDITIONS
+          {/* Indexed Sections */}
+          <div className="lg:col-span-2">
+            <span className="font-mono text-3xs font-semibold uppercase tracking-widest text-bone block mb-4">
+              INDEX
             </span>
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-2.5 font-mono text-2xs">
               {NAV_LINKS.map((item) => (
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="hover:text-sky-400 transition-colors"
+                    className="hover:text-bone transition-colors inline-flex items-center gap-2"
                   >
-                    {item.label}
+                    <span className="text-signal">{item.code}</span>
+                    <span>{item.label}</span>
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Research & Data Column */}
-          <div>
-            <span className="font-orbitron text-xs font-bold uppercase tracking-widest text-white block mb-4">
-              OPEN SCIENCE
+          {/* Technical Reference */}
+          <div className="lg:col-span-3">
+            <span className="font-mono text-3xs font-semibold uppercase tracking-widest text-bone block mb-4">
+              ENGINEERING DATA
             </span>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <a
-                  href="#technology"
-                  className="hover:text-sky-400 transition-colors flex items-center gap-1"
-                >
-                  <span>Propulsion Telemetry</span>
-                  <ExternalLink className="w-3 h-3 text-slate-600" />
+                <a href="#technology" className="hover:text-bone transition-colors">
+                  NTR &amp; Gridded Ion Propulsion
                 </a>
               </li>
               <li>
-                <a
-                  href="#destinations"
-                  className="hover:text-sky-400 transition-colors flex items-center gap-1"
-                >
-                  <span>Planetary Topography</span>
-                  <ExternalLink className="w-3 h-3 text-slate-600" />
+                <a href="#destinations" className="hover:text-bone transition-colors">
+                  Shackleton Volatiles Survey
                 </a>
               </li>
               <li>
-                <a
-                  href="#missions"
-                  className="hover:text-sky-400 transition-colors flex items-center gap-1"
-                >
-                  <span>Flight Trajectories</span>
-                  <ExternalLink className="w-3 h-3 text-slate-600" />
+                <a href="#spacecraft" className="hover:text-bone transition-colors">
+                  Flight Vehicle Mass Budgets
                 </a>
               </li>
               <li>
-                <a
-                  href="#mission-control"
-                  className="hover:text-sky-400 transition-colors flex items-center gap-1"
-                >
-                  <span>DSOC Optical Telemetry</span>
-                  <ExternalLink className="w-3 h-3 text-slate-600" />
+                <a href="#mission-control" className="hover:text-bone transition-colors">
+                  1550nm DSOC Link Telemetry
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Legal / Standards Column */}
-          <div>
-            <span className="font-orbitron text-xs font-bold uppercase tracking-widest text-white block mb-4">
-              GOVERNANCE
+          {/* Regulatory Compliance */}
+          <div className="lg:col-span-2">
+            <span className="font-mono text-3xs font-semibold uppercase tracking-widest text-bone block mb-4">
+              COMPLIANCE
             </span>
-            <ul className="space-y-2.5 text-xs text-slate-400">
-              <li>Outer Space Treaty Compliant</li>
-              <li>COSPAR Planetary Protection (Cat IV)</li>
-              <li>Radio Astronomy Quiet Zone Accord</li>
-              <li>Open Space Science Charter</li>
+            <ul className="space-y-2.5 font-mono text-3xs uppercase tracking-wider text-ash">
+              <li>OUTER SPACE TREATY ART. VI</li>
+              <li>COSPAR CATEGORY IV-B</li>
+              <li>LUNAR RADIO QUIET ACCORD</li>
+              <li>ISO-14620 SPACE SYSTEMS</li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-400">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span suppressHydrationWarning>© {new Date().getFullYear()} ASTRA SYSTEMS. ALL RIGHTS RESERVED.</span>
-          </div>
+        {/* Colophon Bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-3xs font-mono uppercase tracking-widest text-ash">
+          <span suppressHydrationWarning>
+            © {new Date().getFullYear()} {BRAND.name} {BRAND.division}. ALL RIGHTS RESERVED.
+          </span>
 
-          <div className="flex items-center gap-6">
-            <a href="#main-content" className="hover:text-sky-400 flex items-center gap-1">
-              <span>BACK TO TOP</span>
-              <ArrowUp className="w-3 h-3" />
-            </a>
-          </div>
+          <a
+            href="#main-content"
+            className="hover:text-signal transition-colors inline-flex items-center gap-1.5"
+          >
+            <span>RETURN TO DATUM</span>
+            <ArrowUp className="w-3.5 h-3.5" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </footer>

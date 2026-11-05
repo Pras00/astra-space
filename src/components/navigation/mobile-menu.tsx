@@ -2,16 +2,16 @@
 
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, ChevronRight, Radio } from "lucide-react";
+import { X, ArrowUpRight, Radio } from "lucide-react";
 import { NAV_LINKS, BRAND } from "@/lib/constants";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { AstraLogo } from "@/components/ui/astra-logo";
 import { useMounted } from "@/hooks/use-mounted";
 
 interface MobileMenuProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onOpenLaunchControl: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly onOpenLaunchControl: () => void;
 }
 
 export function MobileMenu({
@@ -22,15 +22,23 @@ export function MobileMenu({
   const mounted = useMounted();
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
+    if (!isOpen) {
       document.body.style.overflow = "";
+      return;
     }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!isOpen || !mounted) return null;
 
@@ -38,65 +46,67 @@ export function MobileMenu({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Mobile Navigation Menu"
-      className="fixed inset-0 z-[100] flex flex-col justify-between bg-slate-950/98 backdrop-blur-2xl p-6 md:hidden animate-in fade-in slide-in-from-top-4 duration-300"
+      aria-label="Navigation Menu"
+      className="fixed inset-0 z-50 flex flex-col justify-between bg-obsidian p-6 lg:hidden film-grain"
     >
       {/* Top Bar */}
-      <div className="flex items-center justify-between pb-6 border-b border-slate-800/80">
-        <div className="flex items-center gap-2.5">
+      <div className="flex items-center justify-between pb-5 border-b border-hairline">
+        <div className="flex items-center gap-3">
           <AstraLogo size={28} />
-          <span className="font-orbitron font-bold text-base tracking-widest text-white">
+          <span className="font-display font-bold text-base tracking-widest text-bone">
             {BRAND.name}
           </span>
-          <HudBadge variant="cyan">SYS ONLINE</HudBadge>
+          <HudBadge variant="signal" pulse>
+            NOMINAL
+          </HudBadge>
         </div>
         <button
           onClick={onClose}
           type="button"
-          className="p-2.5 text-slate-400 hover:text-white rounded-lg bg-slate-900/60 border border-slate-800"
+          className="p-2.5 text-titanium hover:text-bone rounded-none bg-carbon border border-hairline-strong cursor-pointer"
           aria-label="Close navigation menu"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="my-auto py-8 space-y-3">
-        {NAV_LINKS.map((link, idx) => (
+      {/* Indexed Links */}
+      <nav className="my-auto py-6 divide-y divide-hairline border-y border-hairline" aria-label="Mobile Navigation">
+        {NAV_LINKS.map((link) => (
           <a
             key={link.href}
             href={link.href}
             onClick={onClose}
-            className="group flex items-center justify-between py-3 px-4 rounded-lg bg-slate-900/40 border border-slate-800/60 hover:border-sky-500/40 hover:bg-slate-900/80 transition-all duration-200"
+            className="group flex items-center justify-between py-4 px-2 hover:bg-carbon transition-colors"
           >
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-xs text-sky-400">0{idx + 1}</span>
-              <span className="font-orbitron text-lg font-medium text-slate-200 group-hover:text-white group-hover:translate-x-1 transition-transform">
+            <div className="flex items-baseline gap-4">
+              <span className="font-mono text-xs text-signal">{link.code}</span>
+              <span className="font-display text-2xl font-bold uppercase tracking-tight text-bone">
                 {link.label}
               </span>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-sky-400 transition-colors" />
+            <ArrowUpRight className="w-5 h-5 text-ash group-hover:text-signal transition-colors" aria-hidden="true" />
           </a>
         ))}
       </nav>
 
-      {/* Launch Control CTA & Footer */}
-      <div className="pt-6 border-t border-slate-800/80 space-y-4">
+      {/* Bottom Command Trigger */}
+      <div className="pt-6 space-y-4">
         <button
           type="button"
           onClick={() => {
             onClose();
             onOpenLaunchControl();
           }}
-          className="w-full py-3.5 px-4 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-orbitron font-bold text-xs tracking-widest flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(56,189,248,0.35)] transition-all"
+          className="w-full py-4 px-4 rounded-none bg-signal hover:bg-signal-hover text-bone font-mono font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-colors cursor-pointer"
         >
-          <Radio className="w-4 h-4" />
-          LAUNCH CONTROL COMMAND
+          <Radio className="w-4 h-4" aria-hidden="true" />
+          <span>Open Flight Telemetry</span>
         </button>
 
-        <div className="flex items-center justify-between text-[11px] font-mono text-slate-500">
-          <span>{BRAND.established} {"//"} DEEP CISLUNAR</span>
-          <span>SYSTEM VER 4.2</span>
+        <div className="flex items-center justify-between text-3xs font-mono text-ash uppercase tracking-widest">
+          <span>{BRAND.hq}</span>
+          <span>EST. {BRAND.established}</span>
         </div>
       </div>
     </div>,

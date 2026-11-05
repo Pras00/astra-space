@@ -1,40 +1,31 @@
 "use client";
 
 interface FallbackCanvasProps {
-  planetName?: string;
-  accentColor?: string;
-  glowColor?: string;
+  readonly planetName?: string;
+  readonly accentColor?: string;
 }
 
 export function FallbackCanvas({
-  planetName = "Earth",
-  accentColor = "#38bdf8",
-  glowColor = "rgba(56, 189, 248, 0.4)",
+  planetName = "EARTH",
+  accentColor = "#ff3b1d",
 }: FallbackCanvasProps) {
   return (
-    <div className="relative w-full h-full flex items-center justify-center pointer-events-none select-none">
-      {/* Outer Atmospheric Halo */}
-      <div
-        className="absolute w-[280px] sm:w-[420px] md:w-[520px] h-[280px] sm:h-[420px] md:h-[520px] rounded-full blur-[80px] opacity-40 transition-all duration-700"
-        style={{ backgroundColor: glowColor }}
-      />
+    <div className="relative w-full h-96 sm:h-112 flex items-center justify-center pointer-events-none select-none">
+      {/* Architectural Target Reticle */}
+      <div className="absolute w-72 sm:w-96 h-72 sm:h-96 rounded-full border border-hairline-strong border-dashed" />
+      <div className="absolute w-84 sm:w-112 h-px bg-hairline" />
+      <div className="absolute h-84 sm:h-112 w-px bg-hairline" />
 
-      {/* Orbital Ring Vector */}
-      <div className="absolute w-[340px] sm:w-[500px] md:w-[620px] h-[340px] sm:h-[500px] md:h-[620px] rounded-full border border-sky-500/20 border-dashed animate-[spin_120s_linear_infinite]" />
-
-      {/* Celestial Sphere SVG */}
+      {/* Optical Sphere Simulation */}
       <div
-        className="relative w-[220px] sm:w-[320px] md:w-[400px] h-[220px] sm:h-[320px] md:h-[400px] rounded-full shadow-[inset_-30px_-30px_60px_rgba(0,0,0,0.9),0_0_50px_rgba(56,189,248,0.2)] overflow-hidden transition-all duration-700"
+        className="relative w-56 sm:w-72 md:w-80 h-56 sm:h-72 md:w-80 rounded-full overflow-hidden border border-hairline-strong"
         style={{
-          background: `radial-gradient(circle at 35% 30%, ${accentColor} 0%, #0c1829 45%, #020617 80%)`,
+          background: `radial-gradient(circle at 32% 28%, ${accentColor} 0%, #161820 48%, #060608 82%)`,
         }}
       >
-        {/* Surface texture simulation lines */}
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
-
-        {/* Planet name HUD stamp */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-widest text-white/40 uppercase">
-          {planetName} {"//"} OPTICAL SIMULATION
+        <div className="absolute inset-0 blueprint-dots opacity-35" />
+        <div className="absolute bottom-6 inset-x-0 text-center font-mono text-3xs tracking-widest text-bone/60 uppercase">
+          {planetName} — TELEMETRY MODEL
         </div>
       </div>
     </div>

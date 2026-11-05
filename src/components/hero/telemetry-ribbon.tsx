@@ -2,31 +2,26 @@ import { HERO_METRICS } from "@/lib/constants";
 
 export function TelemetryRibbon() {
   return (
-    <div className="w-full border-y border-slate-800/80 bg-slate-950/60 backdrop-blur-md py-3.5 px-4 overflow-x-auto select-none">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-8 min-w-[680px]">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
-          <span className="font-mono text-xs text-sky-300 font-semibold tracking-widest uppercase">
-            LIVE ORBITAL FEED
-          </span>
-        </div>
-
-        <div className="flex items-center gap-8 divide-x divide-slate-800">
-          {HERO_METRICS.map((metric) => (
-            <div key={metric.label} className="pl-8 first:pl-0 flex items-center gap-3">
-              <span className="font-mono text-[11px] text-slate-400 tracking-wider">
-                {metric.label}:
-              </span>
-              <span className="font-orbitron text-xs font-semibold text-white tracking-wider">
+    <div className="w-full border-t border-hairline bg-obsidian/90 backdrop-blur-xs select-none">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 divide-x divide-hairline">
+        {HERO_METRICS.map((metric) => (
+          <div
+            key={metric.label}
+            className="py-4 px-3 sm:px-5 first:pl-0 flex flex-col justify-between gap-1"
+          >
+            <span className="font-mono text-3xs text-ash uppercase tracking-widest">
+              {metric.label}
+            </span>
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono text-lg sm:text-xl font-bold text-bone tabular-nums tracking-tight">
                 {metric.value}
               </span>
+              <span className="font-mono text-3xs text-signal font-semibold uppercase tracking-widest">
+                {metric.unit}
+              </span>
             </div>
-          ))}
-        </div>
-
-        <div className="font-mono text-[11px] text-slate-400 tracking-wider">
-          FREQ: 8.4 GHz X-BAND
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );

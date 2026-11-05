@@ -24,9 +24,9 @@ export const MISSIONS: MissionNode[] = [
     description:
       "Establishing the first permanent cislunar propellant harvesting depot and modular pressurized habitat at Shackleton Crater rim, tapping perpetual solar illumination.",
     milestones: [
-      "Autonomous autonomous regolith landing",
-      "Deploy 50kW nuclear Stirling reactor",
-      "Liquid methane & LOX production synthesis",
+      "Terrain-relative LiDAR landing on Shackleton Rim",
+      "50 kWe fission surface reactor commissioning",
+      "Cryogenic LOX & liquid methane propellant synthesis",
     ],
     trajectoryDeltaV: "3.92 km/s",
     phase: 1,

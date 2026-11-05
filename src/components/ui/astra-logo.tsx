@@ -1,93 +1,81 @@
-import React, { useId } from "react";
+import { useId } from "react";
+import { cn } from "@/lib/utils";
 
 interface AstraLogoProps {
-  size?: number;
-  className?: string;
-  showWordmark?: boolean;
+  readonly size?: number;
+  readonly className?: string;
+  readonly showWordmark?: boolean;
 }
 
 export function AstraLogo({
-  size = 36,
-  className = "",
+  size = 34,
+  className,
   showWordmark = false,
 }: AstraLogoProps) {
   const rawId = useId();
   const id = rawId.replace(/[^a-zA-Z0-9_-]/g, "");
-  const chevronGradId = `astra-chevron-${id}`;
-  const orbitGradId = `astra-orbit-${id}`;
-  const glowFilterId = `astra-glow-${id}`;
+  const clipId = `astra-clip-${id}`;
 
   return (
-    <div className={`inline-flex items-center gap-3 ${className}`}>
-      {/* Precision Aerospace Vector Insignia */}
+    <div className={cn("inline-flex items-center gap-3", className)}>
+      {/* Precision Brutalist Aerospace Vector Mark */}
       <svg
         width={size}
         height={size}
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="shrink-0 transition-transform duration-300 group-hover:scale-105"
+        className="shrink-0"
         aria-hidden="true"
       >
         <defs>
-          {/* Subtle Starlight Gradient */}
-          <linearGradient id={chevronGradId} x1="50" y1="14" x2="50" y2="84" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="60%" stopColor="#E2E8F0" />
-            <stop offset="100%" stopColor="#94A3B8" />
-          </linearGradient>
-
-          {/* Electric Cyan Orbital Beam Gradient */}
-          <linearGradient id={orbitGradId} x1="12" y1="64" x2="88" y2="30" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#0284C7" stopOpacity="0.2" />
-            <stop offset="50%" stopColor="#38BDF8" />
-            <stop offset="100%" stopColor="#7DD3FC" />
-          </linearGradient>
-
-          {/* Core Glow Filter */}
-          <filter id={glowFilterId} x="0" y="0" width="100" height="100" filterUnits="userSpaceOnUse">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
+          <clipPath id={clipId}>
+            <rect width="100" height="100" />
+          </clipPath>
         </defs>
 
-        {/* Ambient Outer Halo */}
-        <circle cx="50" cy="50" r="44" stroke="rgba(56, 189, 248, 0.15)" strokeWidth="1" strokeDasharray="3 5" />
+        <g clipPath={`url(#${clipId})`}>
+          {/* Architectural Outer Frame */}
+          <rect
+            x="4"
+            y="4"
+            width="92"
+            height="92"
+            stroke="#F4F4F0"
+            strokeOpacity="0.22"
+            strokeWidth="2"
+          />
 
-        {/* Dynamic Orbital Trajectory Arc */}
-        <path
-          d="M 14,64 C 20,44 65,30 88,32"
-          stroke={`url(#${orbitGradId})`}
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          filter={`url(#${glowFilterId})`}
-        />
+          {/* Corner Crosshairs */}
+          <path d="M4 16V4H16" stroke="#F4F4F0" strokeWidth="2.5" />
+          <path d="M84 96H96V84" stroke="#F4F4F0" strokeWidth="2.5" />
 
-        {/* Ascending Chevron / Delta Wing (The 'A') */}
-        <path
-          d="M 50,16 L 24,80 L 37,74 L 50,44 L 63,74 L 76,80 Z"
-          fill={`url(#${chevronGradId})`}
-        />
+          {/* Delta Wing Monolith ('A') */}
+          <path
+            d="M50 16L21 82H35.5L50 46.5L64.5 82H79L50 16Z"
+            fill="#F4F4F0"
+          />
 
-        {/* Inner Thrust Keel Notch */}
-        <path
-          d="M 50,47 L 39,73 L 50,65 L 61,73 Z"
-          fill="#030712"
-        />
+          {/* International Aerospace Signal Trajectory Slash */}
+          <path
+            d="M14 68L86 30"
+            stroke="#FF3B1D"
+            strokeWidth="4.5"
+            strokeLinecap="square"
+          />
 
-        {/* Trans-orbital Beacon Node (Celestial Body / Satellite) */}
-        <circle cx="86" cy="32" r="4.5" fill="#38BDF8" filter={`url(#${glowFilterId})`} />
-        <circle cx="86" cy="32" r="2" fill="#FFFFFF" />
+          {/* Orbital Insertion Node */}
+          <rect x="82" y="24" width="8" height="8" fill="#FF3B1D" />
+        </g>
       </svg>
 
-      {/* Optional Wordmark */}
       {showWordmark && (
         <div className="flex flex-col">
-          <span className="font-orbitron font-bold text-lg tracking-[0.25em] text-white leading-none">
+          <span className="font-display font-bold text-lg tracking-widest text-bone leading-none">
             ASTRA
           </span>
-          <span className="font-mono text-[9px] text-slate-400 tracking-wider mt-0.5">
-            EXPLORATION SYSTEMS
+          <span className="font-mono text-3xs text-ash tracking-widest mt-1">
+            FLIGHT SYSTEMS
           </span>
         </div>
       )}

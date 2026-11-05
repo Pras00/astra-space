@@ -1,306 +1,302 @@
 "use client";
 
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Cpu,
-  Zap,
-  Shield,
-  Radio,
-  Activity,
-  Crosshair,
-} from "lucide-react";
-import { TECHNOLOGIES, TechnologyItem } from "@/data/technologies";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { Crosshair } from "lucide-react";
+import { TECHNOLOGIES } from "@/data/technologies";
 import { HudBadge } from "@/components/ui/hud-badge";
+import {
+  PinnedStageShell,
+  StageDescriptor,
+  usePinnedStage,
+} from "@/components/scrollytelling/pinned-stage";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
-export function TechnologyExplorer() {
-  const [selectedTechId, setSelectedTechId] = useState<string>("propulsion");
-  const selectedTech =
-    TECHNOLOGIES.find((t) => t.id === selectedTechId) || TECHNOLOGIES[0];
-  const reducedMotion = useReducedMotion();
+const TECH_STAGES: readonly StageDescriptor[] = TECHNOLOGIES.map((tech) => ({
+  id: tech.id,
+  code: tech.tag,
+  label: tech.category,
+}));
 
-  const getCategoryIcon = (cat: TechnologyItem["category"]) => {
-    switch (cat) {
-      case "PROPULSION":
-        return <Zap className="w-4 h-4 text-sky-400" />;
-      case "AVIONICS":
-        return <Cpu className="w-4 h-4 text-emerald-400" />;
-      case "DEFENSE":
-        return <Shield className="w-4 h-4 text-indigo-400" />;
-      case "TELEMETRY":
-        return <Radio className="w-4 h-4 text-amber-400" />;
-      case "LIFE SUPPORT":
-        return <Activity className="w-4 h-4 text-cyan-400" />;
-    }
-  };
+export function TechnologyExplorer() {
+  const reducedMotion = useReducedMotion();
+  const {
+    containerRef,
+    activeIndex,
+    overallProgress,
+    totalRunwayVh,
+    jumpToStage,
+  } = usePinnedStage(TECH_STAGES, 88);
+
+  const selectedTech = TECHNOLOGIES[activeIndex] ?? TECHNOLOGIES[0];
+  const scannerX = Math.max(4, Math.min(96, Math.round(overallProgress * 100)));
 
   return (
-    <section
+    <PinnedStageShell
       id="technology"
-      className="relative py-28 sm:py-36 border-b border-slate-900 overflow-hidden"
+      containerRef={containerRef}
+      totalRunwayVh={totalRunwayVh}
+      className="bg-obsidian"
     >
-      {/* Background Ambience */}
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[650px] h-[500px] bg-sky-950/20 rounded-full blur-[180px] pointer-events-none" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-2.5 mb-3 border-b border-hairline">
+          <div>
+            <div className="flex items-center gap-3 font-mono text-2xs uppercase tracking-widest text-ash mb-1">
+              <span className="text-signal font-semibold">04</span>
+              <span className="w-4 h-px bg-hairline-strong" />
+              <span>CLOSED-CYCLE SUBSYSTEMS — X-RAY SCHEMATIC SCAN</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tighter text-bone leading-none">
+              VEHICLE SUBSYSTEMS
+            </h2>
+          </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <SectionHeading
-          tag="AEROSPACE SYSTEMS // SECTION 05"
-          title="ENGINEERED FOR THE IMPOSSIBLE"
-          subtitle="Interactive engineering schematic. Select any subsystem hotspot to inspect aerospace telemetry and specifications."
-        />
+          <div className="font-mono text-3xs uppercase tracking-widest text-ash tabular-nums">
+            SCAN AXIS X:{scannerX.toString().padStart(2, "0")}% —{" "}
+            <span className="text-signal">{selectedTech.tag}</span>
+          </div>
+        </div>
 
-        {/* Tactical Subsystem Selector Bar */}
-        <div className="flex items-center gap-2 mt-12 mb-8 overflow-x-auto pb-2 select-none">
-          {TECHNOLOGIES.map((tech) => {
-            const isActive = tech.id === selectedTechId;
+        {/* Subsystem Index Strip */}
+        <div
+          role="tablist"
+          aria-label="Spacecraft Subsystems"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border border-hairline divide-x divide-y lg:divide-y-0 divide-hairline bg-carbon mb-3.5"
+        >
+          {TECHNOLOGIES.map((tech, idx) => {
+            const isActive = idx === activeIndex;
             return (
               <button
                 key={tech.id}
-                onClick={() => setSelectedTechId(tech.id)}
-                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-md font-mono text-xs whitespace-nowrap border transition-all duration-200 ${
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`tech-panel-${tech.id}`}
+                id={`tech-tab-${tech.id}`}
+                onClick={() => jumpToStage(idx)}
+                className={`px-2.5 py-1.5 text-left font-mono transition-colors cursor-pointer ${
                   isActive
-                    ? "bg-sky-950/70 border-sky-400 text-white shadow-[0_0_15px_rgba(56,189,248,0.25)]"
-                    : "bg-slate-950/40 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700"
+                    ? "bg-signal text-bone"
+                    : "text-ash hover:text-bone hover:bg-graphite"
                 }`}
               >
-                {getCategoryIcon(tech.category)}
-                <span className="font-semibold">{tech.tag}</span>
-                <span className="hidden sm:inline text-[11px] text-slate-400 truncate max-w-[120px]">
-                  {tech.title}
+                <span className="text-3xs block opacity-80">{tech.tag}</span>
+                <span className="text-2xs font-bold uppercase tracking-wider block truncate">
+                  {tech.category}
                 </span>
               </button>
             );
           })}
         </div>
 
-        {/* Blueprint & Specification Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Interactive Blueprint Canvas */}
-          <div className="lg:col-span-7 relative p-6 sm:p-8 rounded-xl border border-slate-800/80 bg-slate-950/80 shadow-[0_15px_50px_rgba(0,0,0,0.8)] min-h-[420px] sm:min-h-[500px] flex items-center justify-center overflow-hidden">
-            {/* Engineering Grid & Radar Scanlines */}
-            <div className="absolute inset-0 space-grid opacity-25 pointer-events-none" />
+        {/* Blueprint Canvas + Spec Readout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-stretch">
+          {/* Left Column: Scroll-Scrubbed SVG Engineering Blueprint */}
+          <div className="lg:col-span-7 relative p-4 sm:p-5 border border-hairline bg-carbon blueprint-dots min-h-60 sm:min-h-72 lg:min-h-76 flex items-center justify-center overflow-hidden hud-frame">
+            {!reducedMotion && (
+              <div
+                className="absolute top-0 bottom-0 w-px bg-signal/75 pointer-events-none z-10"
+                style={{ left: `${scannerX}%` }}
+              >
+                <span className="absolute top-2 left-1.5 font-mono text-3xs text-signal whitespace-nowrap">
+                  SCAN {scannerX}%
+                </span>
+              </div>
+            )}
 
-            {/* Corner Tactical Marks */}
-            <div className="absolute top-3 left-3 flex items-center gap-2 font-mono text-[10px] text-slate-400">
-              <Crosshair className="w-3.5 h-3.5 text-sky-400" />
-              <span>SCHEMATIC: ASTRA-MK4-AVX</span>
+            <div className="absolute top-3 left-3 flex items-center gap-2 font-mono text-3xs text-ash uppercase tracking-widest">
+              <Crosshair className="w-3.5 h-3.5 text-signal" aria-hidden="true" />
+              <span>CAD — ASTRA-MK4-STRUCTURAL</span>
             </div>
 
-            <div className="absolute top-3 right-3 font-mono text-[10px] text-slate-400">
-              SCALE 1:50 // SEC 04
+            <div className="absolute bottom-3 right-3 font-mono text-3xs text-ash uppercase tracking-widest">
+              SCALE 1:50 — METRIC
             </div>
 
-            {/* Futuristic Vector Blueprint Wireframe of Spacecraft */}
-            <div className="relative w-full max-w-xl aspect-[16/10]">
+            <div className="relative w-full max-w-lg aspect-video">
               <svg
                 viewBox="0 0 800 500"
-                className="w-full h-full text-slate-700"
+                className="w-full h-full"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-label="ASTRA Mk4 Spacecraft Structural Blueprint"
               >
-                {/* Center Hull Guideline */}
                 <line
-                  x1="60"
-                  y1="250"
-                  x2="740"
-                  y2="250"
-                  stroke="rgba(56, 189, 248, 0.25)"
-                  strokeWidth="1"
-                  strokeDasharray="4 4"
-                />
-
-                {/* Aerodynamic Forward Bow */}
-                <path
-                  d="M 60,250 L 160,200 L 260,200 L 300,160 L 520,160 L 580,210 L 720,225 L 720,275 L 580,290 L 520,340 L 300,340 L 260,300 L 160,300 Z"
-                  stroke="rgba(148, 163, 184, 0.4)"
-                  strokeWidth="2"
-                  fill="rgba(8, 15, 30, 0.6)"
-                />
-
-                {/* Cockpit / Sensor Dome */}
-                <path
-                  d="M 120,230 L 180,215 L 230,225 L 200,250 Z"
-                  stroke="rgba(56, 189, 248, 0.7)"
-                  strokeWidth="1.5"
-                  fill="rgba(56, 189, 248, 0.15)"
-                />
-
-                {/* Toroidal Magnetic Ring / Life Support Spoke */}
-                <ellipse
-                  cx="400"
-                  cy="250"
-                  rx="60"
-                  ry="130"
-                  stroke="rgba(129, 140, 248, 0.6)"
-                  strokeWidth="1.5"
-                  strokeDasharray="6 4"
-                />
-
-                {/* Propulsion Thruster Nozzles */}
-                <rect
-                  x="680"
-                  y="235"
-                  width="50"
-                  height="30"
-                  stroke="rgba(56, 189, 248, 0.8)"
-                  strokeWidth="2"
-                  fill="rgba(56, 189, 248, 0.2)"
-                />
-                <line
-                  x1="730"
+                  x1="30"
                   y1="250"
                   x2="770"
                   y2="250"
-                  stroke="#38bdf8"
-                  strokeWidth="3"
+                  stroke="rgba(244,244,240,0.16)"
+                  strokeWidth="1"
+                  strokeDasharray="6 6"
+                />
+                <line
+                  x1="400"
+                  y1="40"
+                  x2="400"
+                  y2="460"
+                  stroke="rgba(244,244,240,0.12)"
+                  strokeWidth="1"
+                  strokeDasharray="4 6"
                 />
 
-                {/* Structural ribs */}
-                <line x1="300" y1="160" x2="300" y2="340" stroke="rgba(148,163,184,0.2)" strokeWidth="1" />
-                <line x1="520" y1="160" x2="520" y2="340" stroke="rgba(148,163,184,0.2)" strokeWidth="1" />
+                <path
+                  d="M 80,250 C 135,175 230,168 350,168 L 620,168 L 690,136 L 715,136 L 715,364 L 690,364 L 620,332 L 350,332 C 230,332 135,325 80,250 Z"
+                  stroke="#C8CCD6"
+                  strokeWidth="1.75"
+                  fill="rgba(6, 6, 8, 0.72)"
+                />
 
-                {/* Dynamic SVG Leader Line from Hotspot to Edge */}
-                <circle
-                  cx={(selectedTech.hotspotX / 100) * 800}
-                  cy={(selectedTech.hotspotY / 100) * 500}
-                  r="14"
-                  stroke="#38bdf8"
+                <rect
+                  x="250"
+                  y="188"
+                  width="145"
+                  height="124"
+                  stroke="rgba(244,244,240,0.35)"
+                  strokeWidth="1.2"
+                />
+                <rect
+                  x="415"
+                  y="184"
+                  width="175"
+                  height="132"
+                  stroke="rgba(244,244,240,0.35)"
+                  strokeWidth="1.2"
+                />
+
+                <ellipse
+                  cx="405"
+                  cy="250"
+                  rx="36"
+                  ry="148"
+                  stroke="#FF3B1D"
+                  strokeOpacity="0.55"
+                  strokeWidth="1.25"
+                  strokeDasharray="5 4"
+                />
+
+                <polygon
+                  points="715,175 765,152 765,222 715,208"
+                  stroke="#F4F4F0"
                   strokeWidth="1.5"
-                  strokeDasharray="3 3"
-                  className="animate-[spin_8s_linear_infinite]"
+                />
+                <polygon
+                  points="715,292 765,278 765,348 715,325"
+                  stroke="#F4F4F0"
+                  strokeWidth="1.5"
+                />
+                <polygon
+                  points="715,232 778,220 778,280 715,268"
+                  stroke="#FF3B1D"
+                  strokeWidth="1.75"
+                />
+
+                <path
+                  d="M 74,250 C 110,178 158,166 184,164"
+                  stroke="#FF3B1D"
+                  strokeWidth="2.5"
+                />
+                <path
+                  d="M 74,250 C 110,322 158,334 184,336"
+                  stroke="#FF3B1D"
+                  strokeWidth="2.5"
                 />
               </svg>
 
-              {/* Clickable Interactive Hotspot Nodes */}
-              {TECHNOLOGIES.map((tech) => {
-                const isActive = tech.id === selectedTechId;
+              {TECHNOLOGIES.map((tech, idx) => {
+                const isSelected = idx === activeIndex;
                 return (
                   <button
                     key={tech.id}
-                    onClick={() => setSelectedTechId(tech.id)}
                     type="button"
-                    aria-label={`Inspect ${tech.title}`}
+                    onClick={() => jumpToStage(idx)}
                     style={{
                       left: `${tech.hotspotX}%`,
                       top: `${tech.hotspotY}%`,
                     }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 group p-1.5 rounded-full transition-transform duration-300 select-none ${
-                      isActive ? "scale-125" : "hover:scale-110"
-                    }`}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 group focus:outline-none z-20 cursor-pointer"
+                    aria-label={`Inspect ${tech.tag}: ${tech.title}`}
                   >
-                    <span className="relative flex h-5 w-5 items-center justify-center">
-                      <span
-                        className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                          isActive
-                            ? "animate-ping bg-sky-400"
-                            : "bg-slate-500 group-hover:bg-sky-400"
-                        }`}
-                      />
-                      <span
-                        className={`relative inline-flex rounded-full h-3 w-3 border-2 ${
-                          isActive
-                            ? "bg-sky-400 border-white shadow-[0_0_12px_#38bdf8]"
-                            : "bg-slate-900 border-slate-400 group-hover:border-sky-300"
-                        }`}
-                      />
-                    </span>
-
-                    {/* Hotspot Floating Tag */}
+                    {isSelected && (
+                      <span className="absolute -inset-2 border border-signal animate-ping opacity-60" />
+                    )}
                     <span
-                      className={`absolute top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded font-mono text-[9px] uppercase tracking-wider whitespace-nowrap pointer-events-none transition-opacity duration-200 border ${
-                        isActive
-                          ? "bg-sky-950 border-sky-400 text-white opacity-100 shadow-[0_0_10px_rgba(56,189,248,0.4)]"
-                          : "bg-slate-900/90 border-slate-700 text-slate-400 opacity-0 group-hover:opacity-100"
+                      className={`relative flex items-center justify-center w-6 h-6 border font-mono text-3xs font-bold transition-colors ${
+                        isSelected
+                          ? "bg-signal text-bone border-bone scale-110"
+                          : "bg-obsidian/90 text-titanium border-hairline-strong group-hover:border-signal group-hover:text-bone"
                       }`}
                     >
-                      {tech.tag} {"//"} {tech.title.split(" ")[0]}
+                      0{idx + 1}
                     </span>
                   </button>
                 );
               })}
             </div>
-
-            {/* Bottom Blueprint HUD Telemetry */}
-            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-slate-900 pt-2 pointer-events-none">
-              <span>ACTIVE SYSTEM: {selectedTech.tag}</span>
-              <span className="text-sky-400">{selectedTech.efficiency}</span>
-              <span className="hidden sm:inline">CAD REV 8.04</span>
-            </div>
           </div>
 
-          {/* Right Column: Aerospace Spec Breakdown Panel */}
+          {/* Right Column: Engineering Specification Sheet */}
           <div className="lg:col-span-5">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedTech.id}
-                initial={{ opacity: 0, y: reducedMotion ? 0 : 15 }}
+                id={`tech-panel-${selectedTech.id}`}
+                role="tabpanel"
+                aria-labelledby={`tech-tab-${selectedTech.id}`}
+                initial={reducedMotion ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className="glass-panel p-6 sm:p-8 rounded-xl border border-slate-800 space-y-6 shadow-xl"
+                exit={reducedMotion ? undefined : { opacity: 0, y: -12 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="h-full border border-hairline bg-carbon p-3.5 sm:p-4 flex flex-col justify-between space-y-2.5"
               >
-                {/* Header & Classification */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <HudBadge variant="cyan" pulse>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 border-b border-hairline pb-2">
+                    <span className="font-mono text-2xs sm:text-xs font-bold text-signal">
+                      {selectedTech.tag} — {selectedTech.category}
+                    </span>
+                    <HudBadge variant="neutral">
                       {selectedTech.readinessLevel}
                     </HudBadge>
-                    <span className="font-mono text-xs text-sky-400 font-semibold">
-                      {selectedTech.category}
-                    </span>
                   </div>
 
-                  <h3 className="font-orbitron text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                  <h3 className="font-display text-lg sm:text-xl font-bold uppercase tracking-tight text-bone leading-snug">
                     {selectedTech.title}
                   </h3>
-                  <p className="font-space text-sky-300 text-sm font-medium mt-1">
-                    {selectedTech.headline}
+
+                  <p className="text-xs text-titanium leading-relaxed">
+                    {selectedTech.description}
                   </p>
                 </div>
 
-                {/* Detailed Engineering Narrative */}
-                <p className="text-slate-300 text-sm leading-relaxed font-light">
-                  {selectedTech.description}
-                </p>
-
-                {/* Subsystem Specifications List */}
-                <div className="space-y-2 pt-2 border-t border-slate-800/80">
-                  <span className="font-mono text-xs uppercase tracking-widest text-slate-400 block mb-3">
-                    SUBSYSTEM TELEMETRY BENCHMARKS
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {selectedTech.keySpecs.map((spec, i) => (
+                <div className="space-y-2.5">
+                  <div className="grid grid-cols-2 border border-hairline divide-x divide-y divide-hairline bg-obsidian font-mono">
+                    {selectedTech.keySpecs.map((spec) => (
                       <div
-                        key={i}
-                        className="p-2.5 rounded bg-slate-900/60 border border-slate-800"
+                        key={spec.label}
+                        className="p-2 flex flex-col justify-between gap-0.5"
                       >
-                        <span className="text-slate-400 text-[10px] font-mono block">
+                        <span className="text-3xs text-ash uppercase tracking-widest block truncate">
                           {spec.label}
                         </span>
-                        <span className="text-slate-100 font-mono text-xs font-semibold">
+                        <span className="text-2xs sm:text-xs font-bold text-bone tabular-nums block truncate">
                           {spec.value}
                         </span>
                       </div>
                     ))}
                   </div>
-                </div>
 
-                {/* Engineering Breakthrough Callout */}
-                <div className="p-4 rounded-lg bg-sky-950/40 border border-sky-500/30 text-xs">
-                  <span className="font-orbitron font-bold text-sky-300 block mb-1 uppercase">
-                    STRATEGIC BREAKTHROUGH
-                  </span>
-                  <p className="text-slate-300 leading-relaxed font-light">
+                  <div className="p-2.5 border-l-2 border-signal bg-obsidian font-mono text-3xs text-titanium leading-snug">
+                    <span className="text-3xs text-signal uppercase tracking-widest block mb-0.5">
+                      OPERATIONAL IMPACT — {selectedTech.efficiency}
+                    </span>
                     {selectedTech.breakthrough}
-                  </p>
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
           </div>
         </div>
       </div>
-    </section>
+    </PinnedStageShell>
   );
 }

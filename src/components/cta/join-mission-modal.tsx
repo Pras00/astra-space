@@ -1,26 +1,33 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, FormEvent } from "react";
 import { createPortal } from "react-dom";
-import { X, Send, CheckCircle2, ShieldCheck } from "lucide-react";
+import { X, ArrowRight, Check } from "lucide-react";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { AstraLogo } from "@/components/ui/astra-logo";
 import { BRAND } from "@/lib/constants";
 import { useMounted } from "@/hooks/use-mounted";
 
 interface JoinMissionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+}
+
+interface ManifestFormState {
+  organization: string;
+  email: string;
+  payloadClass: string;
+  flightWindow: string;
 }
 
 export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
   const mounted = useMounted();
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
+  const [formData, setFormData] = useState<ManifestFormState>({
+    organization: "",
     email: "",
-    discipline: "ASTRODYNAMICS & TRAJECTORY OPTIMIZATION",
-    destination: "MARS EXPEDITION ONE",
+    payloadClass: "CISLUNAR SURFACE PAYLOAD (UP TO 14,500 KG)",
+    flightWindow: "2028 // ASTRA-L1 SHACKLETON RIM",
   });
 
   const handleClose = useCallback(() => {
@@ -46,7 +53,7 @@ export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
     };
   }, [isOpen, handleClose]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitted(true);
   };
@@ -57,132 +64,150 @@ export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Join ASTRA Mission Cadet Program"
+      aria-label="Payload Manifest Allocation Request"
       onClick={handleClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-obsidian/90 backdrop-blur-sm"
     >
       <div
-        className="relative w-full max-w-xl bg-[#080d1a] border border-sky-500/40 rounded-xl p-6 sm:p-8 shadow-[0_0_60px_rgba(0,0,0,0.9),0_0_30px_rgba(56,189,248,0.2)] overflow-hidden"
+        className="relative w-full max-w-xl bg-carbon border border-hairline-strong rounded-none p-6 sm:p-8 hud-frame"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="absolute inset-0 scanlines opacity-20 pointer-events-none" />
-
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-3">
+        <div className="flex items-start justify-between pb-5 border-b border-hairline">
+          <div className="flex items-center gap-3.5">
             <AstraLogo size={32} />
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-orbitron font-bold text-base text-white">
-                  CADET ENROLLMENT DIRECTIVE
+              <div className="flex items-center gap-2.5">
+                <span className="font-display font-bold text-lg uppercase tracking-tight text-bone">
+                  Payload Manifest Allocation
                 </span>
-                <HudBadge variant="cyan">TRL-CLASS 1</HudBadge>
+                <HudBadge variant="signal">WINDOW OPEN</HudBadge>
               </div>
-              <span className="font-mono text-[11px] text-slate-400">
-                INTERPLANETARY PERSONNEL DIVISION // {BRAND.hq}
+              <span className="font-mono text-3xs text-ash uppercase tracking-widest block mt-1">
+                FLIGHT OPERATIONS // {BRAND.hq}
               </span>
             </div>
           </div>
           <button
             onClick={handleClose}
             type="button"
-            className="p-2 text-slate-400 hover:text-white rounded-md hover:bg-slate-800 transition-colors"
-            aria-label="Close Enrollment Modal"
+            className="p-2 text-ash hover:text-bone border border-transparent hover:border-hairline-strong transition-colors cursor-pointer"
+            aria-label="Close Payload Manifest Modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {submitted ? (
-          <div className="py-12 text-center space-y-4">
-            <div className="w-14 h-14 mx-auto rounded-full bg-emerald-950/80 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.3)]">
-              <CheckCircle2 className="w-8 h-8" />
+          <div className="py-12 space-y-5">
+            <div className="w-12 h-12 bg-signal text-bone flex items-center justify-center">
+              <Check className="w-6 h-6" aria-hidden="true" />
             </div>
-            <h4 className="font-orbitron font-extrabold text-2xl text-white uppercase tracking-tight">
-              APPLICATION TRANSMITTED
+            <h4 className="font-display font-bold text-2xl text-bone uppercase tracking-tight">
+              Manifest Dossier Logged
             </h4>
-            <p className="font-space text-slate-300 text-sm max-w-md mx-auto">
-              Welcome to the cohort, Cadet {formData.name || "Explorer"}. Your dossier has been encrypted and routed to ASTRA Mission Operations.
+            <p className="font-sans text-titanium text-sm leading-relaxed">
+              Allocation inquiry for{" "}
+              <span className="text-bone font-semibold">
+                {formData.organization || "Partner Mission"}
+              </span>{" "}
+              has been assigned to ASTRA Flight Integration Engineering. Expect orbital mass-budget documentation at{" "}
+              <span className="font-mono text-xs text-bone">{formData.email}</span>.
             </p>
-            <div className="pt-4">
+            <div className="pt-2">
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 type="button"
-                className="px-6 py-2.5 rounded bg-sky-500 hover:bg-sky-400 text-slate-950 font-orbitron text-xs font-bold tracking-wider"
+                className="px-6 py-3 rounded-none bg-bone hover:bg-signal text-obsidian hover:text-bone font-mono text-2xs font-semibold uppercase tracking-widest transition-colors cursor-pointer"
               >
-                RETURN TO MISSION
+                Return to Overview
               </button>
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="block font-mono text-xs text-slate-300 uppercase tracking-wider mb-1.5">
-                FULL NAME / CALLSIGN
+              <label
+                htmlFor="manifest-org"
+                className="block font-mono text-3xs text-ash uppercase tracking-widest mb-1.5"
+              >
+                INSTITUTION / PRINCIPAL INVESTIGATOR
               </label>
               <input
+                id="manifest-org"
                 type="text"
                 required
-                value={formData.name}
+                value={formData.organization}
                 onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
+                  setFormData({ ...formData, organization: e.target.value })
                 }
-                placeholder="Dr. Elena Vance"
-                className="w-full px-3.5 py-2.5 rounded bg-slate-900/90 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 font-space text-sm"
+                placeholder="Jet Propulsion Laboratory — Cryo Volatiles Lab"
+                className="w-full px-3.5 py-2.5 rounded-none bg-obsidian border border-hairline-strong text-bone placeholder-ash/50 focus:outline-none focus:border-signal font-sans text-sm"
               />
             </div>
 
             <div>
-              <label className="block font-mono text-xs text-slate-300 uppercase tracking-wider mb-1.5">
-                SECURE COMMS (EMAIL)
+              <label
+                htmlFor="manifest-email"
+                className="block font-mono text-3xs text-ash uppercase tracking-widest mb-1.5"
+              >
+                MISSION DISPATCH EMAIL
               </label>
               <input
+                id="manifest-email"
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                placeholder="vance@deepspace.network"
-                className="w-full px-3.5 py-2.5 rounded bg-slate-900/90 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-sky-400 font-space text-sm"
+                placeholder="flight-ops@agency.org"
+                className="w-full px-3.5 py-2.5 rounded-none bg-obsidian border border-hairline-strong text-bone placeholder-ash/50 focus:outline-none focus:border-signal font-sans text-sm"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block font-mono text-xs text-slate-300 uppercase tracking-wider mb-1.5">
-                  SCIENTIFIC DISCIPLINE
+                <label
+                  htmlFor="manifest-class"
+                  className="block font-mono text-3xs text-ash uppercase tracking-widest mb-1.5"
+                >
+                  PAYLOAD MASS CLASS
                 </label>
                 <select
-                  value={formData.discipline}
+                  id="manifest-class"
+                  value={formData.payloadClass}
                   onChange={(e) =>
-                    setFormData({ ...formData, discipline: e.target.value })
+                    setFormData({ ...formData, payloadClass: e.target.value })
                   }
-                  className="w-full px-3 py-2.5 rounded bg-slate-900/90 border border-slate-700 text-slate-200 focus:outline-none focus:border-sky-400 font-space text-xs"
+                  className="w-full px-3 py-2.5 rounded-none bg-obsidian border border-hairline-strong text-bone focus:outline-none focus:border-signal font-mono text-2xs"
                 >
-                  <option>ASTRODYNAMICS & TRAJECTORY</option>
-                  <option>CRYOGENIC PROPULSION</option>
-                  <option>CLOSED-LOOP ECLSS BIOLOGY</option>
-                  <option>AUTONOMOUS OPTICAL AVIONICS</option>
-                  <option>HIGH-ENERGY PLASMA PHYSICS</option>
+                  <option>CISLUNAR SURFACE PAYLOAD (UP TO 14,500 KG)</option>
+                  <option>MARS AEROCAPTURE BAY (UP TO 28,000 KG)</option>
+                  <option>DEDICATED ORBITAL DEPLOYER (ESPA-HEAVY)</option>
+                  <option>CREWED RESEARCH MODULE ALLOCATION</option>
                 </select>
               </div>
 
               <div>
-                <label className="block font-mono text-xs text-slate-300 uppercase tracking-wider mb-1.5">
-                  ASSIGNMENT TARGET
+                <label
+                  htmlFor="manifest-window"
+                  className="block font-mono text-3xs text-ash uppercase tracking-widest mb-1.5"
+                >
+                  LAUNCH MANIFEST WINDOW
                 </label>
                 <select
-                  value={formData.destination}
+                  id="manifest-window"
+                  value={formData.flightWindow}
                   onChange={(e) =>
-                    setFormData({ ...formData, destination: e.target.value })
+                    setFormData({ ...formData, flightWindow: e.target.value })
                   }
-                  className="w-full px-3 py-2.5 rounded bg-slate-900/90 border border-slate-700 text-slate-200 focus:outline-none focus:border-sky-400 font-space text-xs"
+                  className="w-full px-3 py-2.5 rounded-none bg-obsidian border border-hairline-strong text-bone focus:outline-none focus:border-signal font-mono text-2xs"
                 >
-                  <option>LUNAR GATEWAY FOUNDRY</option>
-                  <option>MARS EXPEDITION ONE</option>
-                  <option>EUROPA CRYO-OCEAN PROBE</option>
-                  <option>DEEP SPACE INTERSTELLAR</option>
+                  <option>2028 // ASTRA-L1 SHACKLETON RIM</option>
+                  <option>2031 // ASTRA-M1 JEZERO BASIN</option>
+                  <option>2035 // ASTRA-E1 JOVIAN SYSTEM</option>
+                  <option>2040 // ASTRA-DS HELIOPAUSE</option>
                 </select>
               </div>
             </div>
@@ -190,16 +215,16 @@ export function JoinMissionModal({ isOpen, onClose }: JoinMissionModalProps) {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3.5 px-4 rounded bg-sky-500 hover:bg-sky-400 text-slate-950 font-orbitron font-bold text-xs tracking-widest flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-all active:scale-98"
+                className="w-full py-4 px-5 rounded-none bg-signal hover:bg-signal-hover text-bone font-mono font-semibold text-xs uppercase tracking-widest flex items-center justify-center gap-2.5 transition-colors cursor-pointer"
               >
-                <Send className="w-4 h-4" />
-                TRANSMIT ENCRYPTED APPLICATION
+                <span>Submit Manifest Inquiry</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
-            <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400 pt-2">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>OUTER SPACE TREATY ARTICLE VI COMPLIANT</span>
+            <div className="flex items-center justify-between text-3xs font-mono text-ash uppercase tracking-widest pt-2 border-t border-hairline">
+              <span>COSPAR CAT-IV COMPLIANT</span>
+              <span>ITAR / EAR CLEARED</span>
             </div>
           </form>
         )}

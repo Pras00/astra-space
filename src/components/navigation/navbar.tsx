@@ -15,7 +15,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 24);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -25,83 +25,84 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-200 border-b ${
           isScrolled
-            ? "bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 shadow-[0_4px_30px_rgba(0,0,0,0.5)] py-3.5"
-            : "bg-transparent py-5"
+            ? "bg-obsidian/92 backdrop-blur-md border-hairline"
+            : "bg-obsidian/50 backdrop-blur-xs border-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Brand Logo & Telemetry Indicator */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
+          {/* Brand Insignia */}
           <a
-            href="#"
-            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded-sm"
-            aria-label="ASTRA Homepage"
+            href="#main-content"
+            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-1 focus-visible:ring-signal"
+            aria-label="ASTRA Flight Systems Home"
           >
-            <AstraLogo size={36} />
-
+            <AstraLogo size={32} />
             <div className="flex flex-col">
-              <span className="font-orbitron font-bold text-lg tracking-[0.25em] text-white group-hover:text-sky-300 transition-colors">
+              <span className="font-display font-bold text-base tracking-widest text-bone group-hover:text-signal transition-colors leading-none">
                 {BRAND.name}
               </span>
-              <span className="font-mono text-[9px] text-slate-400 tracking-wider hidden sm:block">
-                EXPLORATION SYSTEMS
+              <span className="font-mono text-3xs text-ash tracking-widest mt-1 hidden sm:block">
+                {BRAND.division}
               </span>
             </div>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8" aria-label="Main Navigation">
+          {/* Indexed Architectural Nav Links */}
+          <nav
+            className="hidden lg:flex items-center gap-7"
+            aria-label="Primary Sections"
+          >
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="font-space text-sm tracking-wider text-slate-300 hover:text-white relative py-1 transition-colors group focus:outline-none focus-visible:ring-1 focus-visible:ring-sky-400"
+                className="group flex items-baseline gap-1.5 py-1 text-xs uppercase tracking-wider text-titanium hover:text-bone transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-signal"
               >
-                {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-sky-400 group-hover:w-full transition-all duration-300 ease-out" />
+                <span className="font-mono text-3xs text-ash group-hover:text-signal transition-colors">
+                  {link.code}
+                </span>
+                <span className="font-sans font-medium">{link.label}</span>
               </a>
             ))}
           </nav>
 
-          {/* Right Action: Launch Control & Mobile Menu Toggle */}
+          {/* Right Telemetry & Command Trigger */}
           <div className="flex items-center gap-3">
-            <div className="hidden lg:flex items-center">
-              <HudBadge variant="cyan" pulse className="font-mono">
-                NET 28.4 KM/S
+            <div className="hidden xl:flex items-center">
+              <HudBadge variant="neutral" pulse>
+                DSN 28.4 KM/S
               </HudBadge>
             </div>
 
             <button
               onClick={() => setLaunchControlOpen(true)}
               type="button"
-              className="relative inline-flex items-center gap-2 px-4 py-2 rounded font-orbitron font-semibold text-xs tracking-wider text-slate-950 bg-sky-400 hover:bg-sky-300 transition-all duration-200 shadow-[0_0_20px_rgba(56,189,248,0.25)] hover:shadow-[0_0_25px_rgba(56,189,248,0.45)] active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-none border border-hairline-strong bg-carbon hover:border-signal hover:bg-signal text-bone font-mono text-3xs font-semibold uppercase tracking-widest transition-colors cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-signal"
             >
-              <Radio className="w-3.5 h-3.5 animate-pulse" />
-              <span>LAUNCH CONTROL</span>
+              <Radio className="w-3.5 h-3.5 text-signal group-hover:text-bone" aria-hidden="true" />
+              <span>Flight Telemetry</span>
             </button>
 
-            {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
               type="button"
-              className="p-2 md:hidden text-slate-400 hover:text-white rounded border border-slate-800 bg-slate-900/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
-              aria-label="Open mobile menu"
+              className="p-2.5 lg:hidden text-titanium hover:text-bone rounded-none border border-hairline-strong bg-carbon focus:outline-none focus-visible:ring-1 focus-visible:ring-signal cursor-pointer"
+              aria-label="Open navigation menu"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Drawer */}
       <MobileMenu
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         onOpenLaunchControl={() => setLaunchControlOpen(true)}
       />
 
-      {/* Launch Control Tactical Modal */}
       <LaunchControlModal
         isOpen={launchControlOpen}
         onClose={() => setLaunchControlOpen(false)}

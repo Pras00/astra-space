@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
+interface WebkitWindow extends Window {
+  webkitAudioContext?: typeof AudioContext;
+}
+
 export function AudioToggle() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -15,7 +19,7 @@ export function AudioToggle() {
       if (gainNodeRef.current && audioCtxRef.current) {
         gainNodeRef.current.gain.exponentialRampToValueAtTime(
           0.0001,
-          audioCtxRef.current.currentTime + 0.5
+          audioCtxRef.current.currentTime + 0.4
         );
         setTimeout(() => {
           oscRef.current?.stop();
@@ -23,57 +27,54 @@ export function AudioToggle() {
           audioCtxRef.current?.close();
           audioCtxRef.current = null;
           setIsPlaying(false);
-        }, 500);
+        }, 420);
       }
-    } else {
-      try {
-        const AudioContextClass =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext })
-            .webkitAudioContext;
-        const ctx = new AudioContextClass();
-        audioCtxRef.current = ctx;
+      return;
+    }
 
-        // Master gain
-        const masterGain = ctx.createGain();
-        masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        masterGain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 2.0); // Gentle, subtle level
-        masterGain.connect(ctx.destination);
-        gainNodeRef.current = masterGain;
+    try {
+      const AudioContextClass =
+        window.AudioContext || (window as WebkitWindow).webkitAudioContext;
+      if (!AudioContextClass) return;
 
-        // Ambient low-frequency drone (55Hz Root A1)
-        const osc1 = ctx.createOscillator();
-        osc1.type = "sine";
-        osc1.frequency.setValueAtTime(55, ctx.currentTime);
+      const ctx = new AudioContextClass();
+      audioCtxRef.current = ctx;
 
-        // Low-pass filter for warm cosmic rumble
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(140, ctx.currentTime);
-        filter.Q.setValueAtTime(2.0, ctx.currentTime);
+      const masterGain = ctx.createGain();
+      masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      masterGain.gain.exponentialRampToValueAtTime(0.07, ctx.currentTime + 1.8);
+      masterGain.connect(ctx.destination);
+      gainNodeRef.current = masterGain;
 
-        // Sub-harmonic drone (82.4Hz E2)
-        const osc2 = ctx.createOscillator();
-        osc2.type = "triangle";
-        osc2.frequency.setValueAtTime(82.41, ctx.currentTime);
+      const osc1 = ctx.createOscillator();
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(55, ctx.currentTime);
 
-        const subGain = ctx.createGain();
-        subGain.gain.setValueAtTime(0.4, ctx.currentTime);
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(135, ctx.currentTime);
+      filter.Q.setValueAtTime(1.8, ctx.currentTime);
 
-        osc1.connect(filter);
-        osc2.connect(subGain);
-        subGain.connect(filter);
-        filter.connect(masterGain);
+      const osc2 = ctx.createOscillator();
+      osc2.type = "triangle";
+      osc2.frequency.setValueAtTime(82.41, ctx.currentTime);
 
-        osc1.start();
-        osc2.start();
-        oscRef.current = osc1;
-        oscSubRef.current = osc2;
+      const subGain = ctx.createGain();
+      subGain.gain.setValueAtTime(0.35, ctx.currentTime);
 
-        setIsPlaying(true);
-      } catch (err) {
-        console.warn("Audio synthesis unavailable in current browser", err);
-      }
+      osc1.connect(filter);
+      osc2.connect(subGain);
+      subGain.connect(filter);
+      filter.connect(masterGain);
+
+      osc1.start();
+      osc2.start();
+      oscRef.current = osc1;
+      oscSubRef.current = osc2;
+
+      setIsPlaying(true);
+    } catch {
+      // Silently ignore unsupported audio contexts
     }
   };
 
@@ -87,25 +88,25 @@ export function AudioToggle() {
     <button
       onClick={toggleSound}
       type="button"
-      className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-3 py-2 rounded-full border border-slate-700/60 bg-slate-950/80 backdrop-blur-md text-xs font-mono tracking-wider text-slate-300 hover:text-sky-400 hover:border-sky-500/50 transition-all duration-300 shadow-xl group"
-      aria-label={isPlaying ? "Mute ambient audio" : "Enable ambient cosmic audio"}
-      title={isPlaying ? "Mute ambient audio" : "Enable ambient cosmic audio"}
+      className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 px-3.5 py-2.5 rounded-none border border-hairline-strong bg-carbon/95 text-3xs font-mono uppercase tracking-widest text-titanium hover:text-bone hover:border-signal transition-colors cursor-pointer"
+      aria-label={isPlaying ? "Mute cabin acoustic feed" : "Enable cabin acoustic feed"}
+      aria-pressed={isPlaying}
     >
-      <div className="flex items-end gap-0.5 h-3.5 w-3.5">
+      <div className="flex items-end gap-0.5 h-3 w-3" aria-hidden="true">
         {isPlaying ? (
           <>
-            <span className="w-0.5 bg-sky-400 rounded-full animate-[pulse_0.8s_ease-in-out_infinite] h-full" />
-            <span className="w-0.5 bg-sky-400 rounded-full animate-[pulse_1.2s_ease-in-out_infinite] h-2/3" />
-            <span className="w-0.5 bg-sky-400 rounded-full animate-[pulse_0.9s_ease-in-out_infinite] h-4/5" />
+            <span className="w-0.5 bg-signal animate-pulse h-full" />
+            <span className="w-0.5 bg-signal animate-pulse h-2/3" />
+            <span className="w-0.5 bg-signal animate-pulse h-4/5" />
           </>
         ) : (
-          <VolumeX className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-300" />
+          <VolumeX className="w-3.5 h-3.5 text-ash" />
         )}
       </div>
       <span className="hidden sm:inline">
-        {isPlaying ? "AUDIO ONLINE" : "AMBIENT AUDIO"}
+        {isPlaying ? "ACOUSTIC // ON" : "ACOUSTIC // MUTED"}
       </span>
-      {isPlaying && <Volume2 className="w-3.5 h-3.5 text-sky-400" />}
+      {isPlaying && <Volume2 className="w-3.5 h-3.5 text-signal" aria-hidden="true" />}
     </button>
   );
 }

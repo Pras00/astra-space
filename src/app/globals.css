@@ -1,125 +1,153 @@
 @import "tailwindcss";
 
 @theme {
-  --font-orbitron: var(--font-orbitron);
-  --font-space: var(--font-space-grotesk);
-  --font-display: var(--font-orbitron);
-  --font-sans: var(--font-space-grotesk);
-  --color-void-950: #030712;
-  --color-void-900: #050816;
-  --color-void-800: #080b14;
+  /* Typography System: Architectural Neo-Grotesque + Precision Monospace */
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Micro Typography Scale (eliminates arbitrary text-[10px] / text-[11px] brackets) */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-3xs: 0.625rem;
+  --text-3xs--line-height: 0.875rem;
+
+  /* Primitive Palette — Cool Anodized Carbon & International Aerospace Signal */
+  --color-obsidian: #060608;
+  --color-carbon: #0b0c10;
+  --color-graphite: #12141a;
+  --color-steel: #1c1f28;
+  --color-hairline: rgba(244, 244, 240, 0.1);
+  --color-hairline-strong: rgba(244, 244, 240, 0.22);
+  --color-ash: #878d9c;
+  --color-titanium: #c8ccd6;
+  --color-bone: #f4f4f0;
+  --color-signal: #ff3b1d;
+  --color-signal-hover: #ff553b;
+  --color-signal-muted: rgba(255, 59, 29, 0.14);
+
+  /* Custom Sizing Tokens for 3D Stages & Layout Rhythm */
+  --spacing-18: 4.5rem;
+  --spacing-112: 28rem;
+  --spacing-128: 32rem;
+  --spacing-144: 36rem;
 }
 
 @layer base {
   :root {
-    --background: #030712;
-    --foreground: #f8fafc;
-    --muted: #94a3b8;
-    --accent-blue: #38bdf8;
-    --accent-cyan: #06b6d4;
-    --accent-violet: #818cf8;
-    --card-bg: rgba(8, 11, 20, 0.7);
-    --card-border: rgba(148, 163, 184, 0.12);
+    --surface-void: var(--color-obsidian);
+    --surface-panel: var(--color-carbon);
+    --surface-elevated: var(--color-graphite);
+    --text-primary: var(--color-bone);
+    --text-secondary: var(--color-titanium);
+    --text-muted: var(--color-ash);
+    --accent-primary: var(--color-signal);
+    --border-subtle: var(--color-hairline);
   }
 
   * {
-    border-color: rgba(148, 163, 184, 0.12);
+    border-color: var(--border-subtle);
   }
 
   html {
     color-scheme: dark;
     scroll-behavior: smooth;
+    background-color: var(--surface-void);
   }
 
   body {
-    background-color: #030712;
-    color: #f8fafc;
-    overflow-x: hidden;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: var(--surface-void);
+    color: var(--text-primary);
+    overflow-x: clip;
+    font-feature-settings: "ss01", "ss02", "tnum";
   }
 
   ::selection {
-    background-color: rgba(56, 189, 248, 0.3);
-    color: #ffffff;
+    background-color: var(--color-signal);
+    color: var(--color-bone);
   }
 
-  /* Custom subtle scrollbar */
+  /* Precision Industrial Scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
+    height: 5px;
   }
+
   ::-webkit-scrollbar-track {
-    background: #030712;
+    background: var(--color-obsidian);
   }
+
   ::-webkit-scrollbar-thumb {
-    background: #1e293b;
-    border-radius: 3px;
+    background: var(--color-steel);
   }
+
   ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: var(--color-signal);
   }
 }
 
-/* Atmospheric Glow Utilities */
-.glow-cyan {
-  box-shadow: 0 0 30px -5px rgba(6, 182, 212, 0.35);
+/* Tactile Film-Grain Noise Overlay (13322566869.com aesthetic) */
+.film-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
 }
 
-.glow-blue {
-  box-shadow: 0 0 35px -5px rgba(56, 189, 248, 0.3);
+/* Architectural 1px Engineering Grid (igloo.inc precision) */
+.architectural-grid {
+  background-size: 72px 72px;
+  background-image:
+    linear-gradient(to right, rgba(244, 244, 240, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244, 244, 240, 0.035) 1px, transparent 1px);
 }
 
-.glow-text-blue {
-  text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+/* Blueprint Dot Matrix for Schematics */
+.blueprint-dots {
+  background-size: 20px 20px;
+  background-image: radial-gradient(rgba(244, 244, 240, 0.14) 1px, transparent 1px);
 }
 
-.glow-text-white {
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-}
-
-/* Futuristic HUD and grid overlays */
-.space-grid {
-  background-size: 60px 60px;
-  background-image: 
-    linear-gradient(to right, rgba(148, 163, 184, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
-}
-
-.radar-sweep {
-  background: conic-gradient(from 0deg, transparent 0deg 300deg, rgba(56, 189, 248, 0.15) 360deg);
-}
-
-/* Glass panel */
-.glass-panel {
-  background: rgba(8, 12, 24, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.12);
-}
-
-.glass-panel-interactive {
-  background: rgba(8, 12, 24, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.glass-panel-interactive:hover {
-  border-color: rgba(56, 189, 248, 0.35);
-  box-shadow: 0 8px 32px -8px rgba(56, 189, 248, 0.15);
-  transform: translateY(-2px);
-}
-
-/* Scanline overlay for tactical HUD */
+/* Subtle CRT / Telemetry Scanlines */
 .scanlines {
   background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
+    to bottom,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.28) 50%
   );
   background-size: 100% 4px;
 }
 
-/* Accessibility: respect reduced motion */
+/* Corner Crosshair Reticle Frame */
+.hud-frame {
+  position: relative;
+}
+
+.hud-frame::before,
+.hud-frame::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  border-color: var(--color-bone);
+  opacity: 0.45;
+}
+
+.hud-frame::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.hud-frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* Accessibility: Strict Reduced Motion Compliance */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

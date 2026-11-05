@@ -1,14 +1,16 @@
 import { cn } from "@/lib/utils";
 
 interface SectionHeadingProps {
-  tag?: string;
-  title: string;
-  subtitle?: string;
-  align?: "left" | "center";
-  className?: string;
+  readonly index?: string;
+  readonly tag?: string;
+  readonly title: string;
+  readonly subtitle?: string;
+  readonly align?: "left" | "center";
+  readonly className?: string;
 }
 
 export function SectionHeading({
+  index,
   tag,
   title,
   subtitle,
@@ -23,17 +25,18 @@ export function SectionHeading({
         className
       )}
     >
-      {tag && (
-        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-sky-400">
-          <span className="w-6 h-[1px] bg-sky-500/50" />
-          <span>{tag}</span>
+      {(index || tag) && (
+        <div className="flex items-center gap-3 font-mono text-2xs uppercase tracking-widest text-ash">
+          {index && <span className="text-signal font-semibold">{index}</span>}
+          {index && tag && <span className="w-4 h-px bg-hairline-strong" />}
+          {tag && <span>{tag}</span>}
         </div>
       )}
-      <h2 className="font-orbitron text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white uppercase">
+      <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tighter text-bone uppercase leading-none">
         {title}
       </h2>
       {subtitle && (
-        <p className="max-w-2xl text-slate-400 text-sm sm:text-base leading-relaxed font-light">
+        <p className="max-w-xl text-ash text-sm sm:text-base leading-relaxed">
           {subtitle}
         </p>
       )}

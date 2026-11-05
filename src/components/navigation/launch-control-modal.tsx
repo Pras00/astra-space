@@ -10,11 +10,14 @@ import { ACTIVE_PROBE_TELEMETRY } from "@/data/telemetry";
 import { useMounted } from "@/hooks/use-mounted";
 
 interface LaunchControlModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
 }
 
-export function LaunchControlModal({ isOpen, onClose }: LaunchControlModalProps) {
+export function LaunchControlModal({
+  isOpen,
+  onClose,
+}: LaunchControlModalProps) {
   const mounted = useMounted();
 
   useEffect(() => {
@@ -41,137 +44,131 @@ export function LaunchControlModal({ isOpen, onClose }: LaunchControlModalProps)
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Launch Control Command Center"
+      aria-label="Flight Telemetry Command Console"
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-obsidian/90 backdrop-blur-sm"
     >
       <div
-        className="relative w-full max-w-2xl bg-[#080d1a] border border-sky-500/40 rounded-xl p-6 sm:p-8 shadow-[0_0_60px_rgba(0,0,0,0.9),0_0_30px_rgba(56,189,248,0.2)] overflow-hidden"
+        className="relative w-full max-w-2xl bg-carbon border border-hairline-strong rounded-none p-6 sm:p-8 hud-frame overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Subtle scanline effect */}
-        <div className="absolute inset-0 scanlines opacity-20 pointer-events-none" />
-
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-3">
+        <div className="flex items-start justify-between pb-5 border-b border-hairline">
+          <div className="flex items-center gap-3.5">
             <AstraLogo size={32} />
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-orbitron font-bold text-lg tracking-wider text-white">
-                  LAUNCH CONTROL
+              <div className="flex items-center gap-2.5">
+                <span className="font-display font-bold text-lg uppercase tracking-tight text-bone">
+                  Flight Telemetry Console
                 </span>
-                <HudBadge variant="emerald" pulse>
-                  ONLINE
+                <HudBadge variant="signal" pulse>
+                  LOCKED
                 </HudBadge>
               </div>
-              <p className="font-mono text-xs text-slate-400">
-                STATION ID: {BRAND.hq} {"//"} {BRAND.coordinates}
+              <p className="font-mono text-3xs text-ash uppercase tracking-widest mt-1">
+                {BRAND.hq} — {BRAND.coordinates}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
             type="button"
-            className="p-2 text-slate-400 hover:text-white rounded-md hover:bg-slate-800/60 transition-colors"
-            aria-label="Close Launch Control"
+            className="p-2 text-ash hover:text-bone border border-transparent hover:border-hairline-strong transition-colors cursor-pointer"
+            aria-label="Close Flight Telemetry Console"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
-        {/* Modal Body */}
+        {/* Telemetry Readout Cells */}
         <div className="mt-6 space-y-6">
-          {/* Active Probe Telemetry Mini Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="p-3 rounded border border-slate-800/80 bg-slate-900/40">
-              <span className="font-mono text-[10px] text-slate-400 uppercase tracking-wider block mb-1">
+          <div className="grid grid-cols-1 sm:grid-cols-3 border border-hairline divide-y sm:divide-y-0 sm:divide-x divide-hairline bg-obsidian">
+            <div className="p-4">
+              <span className="font-mono text-3xs text-ash uppercase tracking-widest block mb-1">
                 ACTIVE VEHICLE
               </span>
-              <span className="font-mono text-sm font-semibold text-sky-400">
+              <span className="font-mono text-sm font-bold text-bone block">
                 {ACTIVE_PROBE_TELEMETRY.missionId}
               </span>
-              <span className="block text-[11px] text-slate-400 truncate">
+              <span className="font-mono text-3xs text-ash truncate block mt-0.5">
                 {ACTIVE_PROBE_TELEMETRY.vehicleName}
               </span>
             </div>
 
-            <div className="p-3 rounded border border-slate-800/80 bg-slate-900/40">
-              <span className="font-mono text-[10px] text-slate-400 uppercase tracking-wider block mb-1">
-                VELOCITY
+            <div className="p-4">
+              <span className="font-mono text-3xs text-ash uppercase tracking-widest block mb-1">
+                HELIOCENTRIC VELOCITY
               </span>
-              <span className="font-mono text-sm font-semibold text-emerald-400">
+              <span className="font-mono text-sm font-bold text-signal tabular-nums block">
                 {ACTIVE_PROBE_TELEMETRY.velocityKmS} KM/S
               </span>
-              <span className="block text-[11px] text-slate-400">
-                HYPERBOLIC ESCAPE
+              <span className="font-mono text-3xs text-ash block mt-0.5">
+                JOVIAN TRANSFER
               </span>
             </div>
 
-            <div className="col-span-2 sm:col-span-1 p-3 rounded border border-slate-800/80 bg-slate-900/40">
-              <span className="font-mono text-[10px] text-slate-400 uppercase tracking-wider block mb-1">
-                QUANTUM SIGNAL
+            <div className="p-4">
+              <span className="font-mono text-3xs text-ash uppercase tracking-widest block mb-1">
+                OPTICAL DOWNLINK
               </span>
-              <span className="font-mono text-sm font-semibold text-sky-300">
+              <span className="font-mono text-sm font-bold text-bone tabular-nums block">
                 {ACTIVE_PROBE_TELEMETRY.signalStrength}%
               </span>
-              <span className="block text-[11px] text-slate-400">
-                DSOC CARRIER LOCKED
+              <span className="font-mono text-3xs text-ash block mt-0.5">
+                1550NM DSOC CARRIER
               </span>
             </div>
           </div>
 
-          {/* Subsystems Status list */}
-          <div className="border border-slate-800/80 rounded p-4 bg-slate-900/20 space-y-2.5">
-            <div className="flex items-center justify-between text-xs font-mono text-slate-400 pb-2 border-b border-slate-800/50">
-              <span className="flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-sky-400" />
-                AVIONICS BUS STATUS
+          {/* Avionics Bus Table */}
+          <div className="border border-hairline bg-obsidian p-4">
+            <div className="flex items-center justify-between text-3xs font-mono text-ash uppercase tracking-widest pb-3 mb-3 border-b border-hairline">
+              <span className="flex items-center gap-2">
+                <Cpu className="w-3.5 h-3.5 text-signal" aria-hidden="true" />
+                <span>AVIONICS SUBSYSTEMS</span>
               </span>
-              <span className="text-emerald-400">6 OF 6 NOMINAL</span>
+              <span className="text-bone">06 / 06 NOMINAL</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-              {ACTIVE_PROBE_TELEMETRY.subsystems.slice(0, 4).map((sub) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-2xs">
+              {ACTIVE_PROBE_TELEMETRY.subsystems.map((sub) => (
                 <div
                   key={sub.name}
-                  className="flex items-center justify-between px-2.5 py-1.5 rounded bg-slate-900/60 border border-slate-800"
+                  className="flex items-center justify-between px-3 py-2 bg-carbon border border-hairline"
                 >
-                  <span className="text-slate-300 text-[11px] truncate max-w-[140px]">
-                    {sub.name}
-                  </span>
-                  <span className="text-[10px] text-sky-400 font-semibold">
-                    {sub.status}
+                  <span className="text-titanium truncate pr-2">{sub.name}</span>
+                  <span className="text-3xs text-signal font-semibold shrink-0">
+                    {sub.value}
                   </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Quick Mission Actions */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <a
               href="#mission-control"
               onClick={onClose}
-              className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded bg-sky-500 hover:bg-sky-400 text-slate-950 font-orbitron font-bold text-xs tracking-wider transition-all shadow-[0_0_20px_rgba(56,189,248,0.3)]"
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 px-5 rounded-none bg-signal hover:bg-signal-hover text-bone font-mono font-semibold text-2xs uppercase tracking-widest transition-colors"
             >
-              <Radio className="w-4 h-4" />
-              OPEN FULL TELEMETRY HUD
+              <Radio className="w-4 h-4" aria-hidden="true" />
+              <span>Open Full Telemetry Matrix</span>
             </a>
             <a
-              href="#destinations"
+              href="#missions"
               onClick={onClose}
-              className="flex items-center justify-center gap-2 py-3 px-4 rounded border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white font-orbitron text-xs tracking-wider transition-colors"
+              className="flex items-center justify-center gap-2 py-3.5 px-5 rounded-none border border-hairline-strong hover:border-bone text-titanium hover:text-bone font-mono text-2xs uppercase tracking-widest transition-colors"
             >
-              <Compass className="w-4 h-4" />
-              ORBITAL DESTINATIONS
+              <Compass className="w-4 h-4" aria-hidden="true" />
+              <span>{BRAND.secondaryCta}</span>
             </a>
           </div>
         </div>
 
-        {/* Modal Footer */}
-        <div className="mt-6 pt-4 border-t border-slate-900 flex items-center justify-between text-[11px] font-mono text-slate-500">
-          <span>ASTRA COMMAND PROTOCOL v4.12</span>
-          <span>PRESS ESC TO DISMISS</span>
+        {/* Footer */}
+        <div className="mt-6 pt-4 border-t border-hairline flex items-center justify-between text-3xs font-mono text-ash uppercase tracking-widest">
+          <span>DEEP SPACE NETWORK // NODE 04</span>
+          <span>ESC TO CLOSE</span>
         </div>
       </div>
     </div>,

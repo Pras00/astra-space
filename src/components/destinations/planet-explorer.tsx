@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, Thermometer, Orbit, Gauge, Activity } from "lucide-react";
 import { DESTINATIONS } from "@/data/destinations";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { HudBadge } from "@/components/ui/hud-badge";
 import { FallbackCanvas } from "@/components/3d/fallback-canvas";
+import {
+  PinnedStageShell,
+  StageDescriptor,
+  usePinnedStage,
+} from "@/components/scrollytelling/pinned-stage";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const DynamicPlanetViewer = dynamic(
   () => import("@/components/3d/planet-viewer").then((mod) => mod.PlanetViewer),
@@ -17,193 +20,216 @@ const DynamicPlanetViewer = dynamic(
   }
 );
 
+const PLANET_STAGES: readonly StageDescriptor[] = DESTINATIONS.map(
+  (dest, idx) => ({
+    id: dest.id,
+    code: `0${idx + 1}`,
+    label: dest.name,
+  })
+);
+
 export function PlanetExplorer() {
-  const [selectedDestId, setSelectedDestId] = useState<string>("mars");
-  const selectedDest =
-    DESTINATIONS.find((d) => d.id === selectedDestId) || DESTINATIONS[2];
+  const reducedMotion = useReducedMotion();
+  const {
+    containerRef,
+    activeIndex,
+    stageProgress,
+    totalRunwayVh,
+    jumpToStage,
+  } = usePinnedStage(PLANET_STAGES, 92);
+
+  const selectedDest = DESTINATIONS[activeIndex] ?? DESTINATIONS[0];
+  const stagePct = Math.round(stageProgress * 100);
 
   return (
-    <section
+    <PinnedStageShell
       id="destinations"
-      className="relative py-28 sm:py-36 border-b border-slate-900 overflow-hidden"
+      containerRef={containerRef}
+      totalRunwayVh={totalRunwayVh}
+      className="bg-obsidian"
     >
-      {/* Dynamic Background Atmosphere Glow */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-[180px] opacity-25 pointer-events-none transition-all duration-700"
-        style={{ backgroundColor: selectedDest.glowColor }}
-      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        {/* Top Architectural Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 mb-5 border-b border-hairline">
+          <div>
+            <div className="flex items-center gap-3 font-mono text-2xs uppercase tracking-widest text-ash mb-1.5">
+              <span className="text-signal font-semibold">01</span>
+              <span className="w-4 h-px bg-hairline-strong" />
+              <span>PLANETARY SURVEY — SCROLL-DRIVEN ORBITAL LOCK</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-tighter text-bone leading-none">
+              TARGET WORLDS
+            </h2>
+          </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <SectionHeading
-            tag="ORBITAL TARGETS // SECTION 02"
-            title="DESTINATIONS"
-            subtitle="Worlds waiting to be explored. From cislunar outposts to prebiotic methane seas."
-          />
+          <div className="flex items-center gap-4 font-mono text-3xs uppercase tracking-widest text-ash tabular-nums">
+            <span>
+              BODY 0{activeIndex + 1} OF 0{DESTINATIONS.length}
+            </span>
+            <span className="text-signal">
+              PASS {stagePct.toString().padStart(3, "0")}%
+            </span>
+          </div>
+        </div>
 
-          {/* Planet Selector Tabs */}
+        {/* 3-Zone Pinned Inspection Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+          {/* Left Rail: Scroll-Synced Celestial Stage Index */}
           <div
             role="tablist"
-            aria-label="Celestial Destinations"
-            className="flex items-center gap-1.5 p-1 rounded-lg bg-slate-950/80 border border-slate-800 backdrop-blur-md overflow-x-auto max-w-full"
+            aria-label="Celestial Bodies"
+            className="lg:col-span-3 flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0"
           >
-            {DESTINATIONS.map((dest) => {
-              const isActive = dest.id === selectedDestId;
+            {DESTINATIONS.map((dest, idx) => {
+              const isActive = idx === activeIndex;
+              const fillWidth = isActive
+                ? `${Math.max(8, Math.round(stageProgress * 100))}%`
+                : idx < activeIndex
+                ? "100%"
+                : "0%";
+
               return (
                 <button
                   key={dest.id}
+                  type="button"
                   role="tab"
                   aria-selected={isActive}
-                  aria-controls={`panel-${dest.id}`}
-                  id={`tab-${dest.id}`}
-                  onClick={() => setSelectedDestId(dest.id)}
-                  className={`relative px-3.5 py-2 rounded font-orbitron text-xs tracking-wider uppercase transition-all duration-300 select-none whitespace-nowrap ${
+                  aria-controls={`planet-panel-${dest.id}`}
+                  id={`planet-tab-${dest.id}`}
+                  onClick={() => jumpToStage(idx)}
+                  className={`relative text-left px-3.5 py-3 rounded-none border transition-colors shrink-0 lg:shrink cursor-pointer overflow-hidden ${
                     isActive
-                      ? "text-slate-950 font-bold bg-white shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-                      : "text-slate-400 hover:text-white hover:bg-slate-900/60"
+                      ? "bg-carbon border-signal text-bone"
+                      : "bg-obsidian border-hairline text-ash hover:text-bone hover:border-hairline-strong"
                   }`}
                 >
-                  {dest.name}
+                  <div className="flex items-center justify-between gap-4 font-mono text-2xs uppercase tracking-wider">
+                    <span className="flex items-center gap-2.5">
+                      <span
+                        className={
+                          isActive ? "text-signal font-bold" : "text-ash"
+                        }
+                      >
+                        0{idx + 1}
+                      </span>
+                      <span className="font-semibold">{dest.name}</span>
+                    </span>
+                    <span className="hidden xl:inline text-3xs text-ash tabular-nums">
+                      {dest.distance}
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-steel">
+                    <div
+                      className={`h-full transition-none ${
+                        isActive ? "bg-signal" : "bg-ash/40"
+                      }`}
+                      style={{ width: fillWidth }}
+                    />
+                  </div>
                 </button>
               );
             })}
           </div>
-        </div>
 
-        {/* Interactive Explorer Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column: 3D Interactive Planet Canvas */}
-          <div className="lg:col-span-6 relative flex items-center justify-center">
-            {/* Background Radar Range Marks */}
-            <div className="absolute w-[300px] sm:w-[420px] h-[300px] sm:h-[420px] rounded-full border border-slate-800/80 pointer-events-none" />
-            <div className="absolute w-[380px] sm:w-[500px] h-[380px] sm:h-[500px] rounded-full border border-slate-800/40 border-dashed pointer-events-none" />
-
-            <div className="w-full relative z-10">
-              <DynamicPlanetViewer destination={selectedDest} />
-            </div>
+          {/* Center Column: Interactive + Scroll-Scrubbed 3D Planet */}
+          <div className="lg:col-span-5 relative flex items-center justify-center border border-hairline bg-carbon/40 hud-frame">
+            <DynamicPlanetViewer
+              destination={selectedDest}
+              stageProgress={stageProgress}
+            />
           </div>
 
-          {/* Right Column: Planet Telemetry & Deep Narrative */}
-          <div className="lg:col-span-6">
+          {/* Right Column: Engineering Telemetry Readout */}
+          <div className="lg:col-span-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedDest.id}
-                id={`panel-${selectedDest.id}`}
+                id={`planet-panel-${selectedDest.id}`}
                 role="tabpanel"
-                aria-labelledby={`tab-${selectedDest.id}`}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className="space-y-6"
+                aria-labelledby={`planet-tab-${selectedDest.id}`}
+                initial={reducedMotion ? false : { opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reducedMotion ? undefined : { opacity: 0, y: -14 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="border border-hairline bg-carbon p-4 sm:p-5 space-y-4"
               >
-                {/* Header & Status */}
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <HudBadge
-                      variant={
-                        selectedDest.status === "ACTIVE EXPEDITION"
-                          ? "emerald"
-                          : selectedDest.status === "ESTABLISHED BASE"
-                          ? "cyan"
-                          : "violet"
-                      }
-                      pulse
-                    >
-                      {selectedDest.status}
-                    </HudBadge>
-                    <span className="font-mono text-xs text-slate-400">
-                      ORBITAL PERIOD: {selectedDest.orbitalPeriod}
+                <div className="flex items-start justify-between gap-3 border-b border-hairline pb-3">
+                  <div>
+                    <span className="font-mono text-3xs text-ash uppercase tracking-widest block mb-1">
+                      {selectedDest.coordinates}
                     </span>
+                    <h3 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tighter text-bone">
+                      {selectedDest.name}
+                    </h3>
+                    <p className="text-xs text-titanium mt-0.5">
+                      {selectedDest.subtitle}
+                    </p>
                   </div>
-
-                  <h3 className="font-orbitron text-4xl sm:text-5xl font-black tracking-tight text-white uppercase">
-                    {selectedDest.name}
-                  </h3>
-                  <p className="font-space text-base text-sky-300/90 font-medium mt-1">
-                    {selectedDest.subtitle}
-                  </p>
+                  <HudBadge variant="signal">{selectedDest.status}</HudBadge>
                 </div>
 
-                {/* Telemetry Metrics 4-Box Grid */}
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  {/* Distance */}
-                  <div className="glass-panel p-4 rounded-lg border border-slate-800">
-                    <div className="flex items-center gap-1.5 text-slate-400 text-xs font-mono mb-1">
-                      <Compass className="w-3.5 h-3.5 text-sky-400" />
-                      <span>{selectedDest.distanceLabel}</span>
-                    </div>
-                    <span className="font-orbitron text-xl sm:text-2xl font-bold text-white tracking-wide">
+                <p className="text-xs sm:text-sm text-titanium leading-relaxed">
+                  {selectedDest.description}
+                </p>
+
+                <div className="grid grid-cols-2 border border-hairline divide-x divide-y divide-hairline bg-obsidian font-mono">
+                  <div className="p-2.5">
+                    <span className="text-3xs text-ash uppercase tracking-widest block">
+                      TRANSIT DIST
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
                       {selectedDest.distance}
                     </span>
                   </div>
-
-                  {/* Surface Temperature */}
-                  <div className="glass-panel p-4 rounded-lg border border-slate-800">
-                    <div className="flex items-center gap-1.5 text-slate-400 text-xs font-mono mb-1">
-                      <Thermometer className="w-3.5 h-3.5 text-orange-400" />
-                      <span>SURFACE TEMPERATURE</span>
-                    </div>
-                    <span className="font-orbitron text-xl sm:text-2xl font-bold text-white tracking-wide">
-                      {selectedDest.temperature}
+                  <div className="p-2.5">
+                    <span className="text-3xs text-ash uppercase tracking-widest block">
+                      SURFACE GRAVITY
                     </span>
-                  </div>
-
-                  {/* Surface Gravity */}
-                  <div className="glass-panel p-4 rounded-lg border border-slate-800">
-                    <div className="flex items-center gap-1.5 text-slate-400 text-xs font-mono mb-1">
-                      <Gauge className="w-3.5 h-3.5 text-sky-400" />
-                      <span>SURFACE GRAVITY</span>
-                    </div>
-                    <span className="font-orbitron text-xl sm:text-2xl font-bold text-white tracking-wide">
+                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
                       {selectedDest.gravity}
                     </span>
                   </div>
-
-                  {/* Exploration Progress */}
-                  <div className="glass-panel p-4 rounded-lg border border-slate-800">
-                    <div className="flex items-center justify-between text-slate-400 text-xs font-mono mb-1">
-                      <span className="flex items-center gap-1.5">
-                        <Activity className="w-3.5 h-3.5 text-emerald-400" />
-                        SURFACE MAPPED
-                      </span>
-                      <span className="text-emerald-400 font-bold">
-                        {selectedDest.progress}%
-                      </span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full mt-2 overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${selectedDest.progress}%` }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="h-full bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full"
-                      />
-                    </div>
+                  <div className="p-2.5">
+                    <span className="text-3xs text-ash uppercase tracking-widest block">
+                      MEAN TEMP
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
+                      {selectedDest.temperature}
+                    </span>
+                  </div>
+                  <div className="p-2.5">
+                    <span className="text-3xs text-ash uppercase tracking-widest block">
+                      ORBITAL PERIOD
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-bone tabular-nums mt-0.5 block">
+                      {selectedDest.orbitalPeriod}
+                    </span>
                   </div>
                 </div>
 
-                {/* Narrative & Scientific Goal */}
-                <div className="space-y-3 pt-2">
-                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-light">
-                    {selectedDest.description}
-                  </p>
-
-                  <div className="p-3.5 rounded bg-slate-900/50 border border-slate-800/80 text-xs font-mono text-slate-300 flex items-start gap-2.5">
-                    <Orbit className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-sky-400 font-semibold uppercase block mb-0.5">
-                        PRIMARY SCIENTIFIC DIRECTIVE
-                      </span>
-                      <span>{selectedDest.scientificGoal}</span>
-                    </div>
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between font-mono text-3xs uppercase tracking-widest">
+                    <span className="text-ash">INFRASTRUCTURE READINESS</span>
+                    <span className="text-signal font-bold tabular-nums">
+                      {selectedDest.progress}%
+                    </span>
                   </div>
+                  <div className="w-full h-1 bg-obsidian border border-hairline overflow-hidden">
+                    <div
+                      className="h-full bg-signal"
+                      style={{ width: `${selectedDest.progress}%` }}
+                    />
+                  </div>
+                  <p className="font-mono text-3xs text-ash pt-1 leading-relaxed">
+                    DIRECTIVE: {selectedDest.scientificGoal}
+                  </p>
                 </div>
               </motion.div>
             </AnimatePresence>
           </div>
         </div>
       </div>
-    </section>
+    </PinnedStageShell>
   );
 }
